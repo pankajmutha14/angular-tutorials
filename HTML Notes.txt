@@ -1,0 +1,1803 @@
+HTML Notes
+_____________________
+
+1. <!DOCTYPE html> ----> 
+a. Tells browser which version of html the code is written in. 
+b. The latest version of html is 5
+
+2. <html lang="en">........</html>
+a. Tells the content of the website is in English
+b. This is the root element of html
+
+3. <head>.......</head>
+Usually we have the following in head section
+a. <meta charset="UTF-8"> ----> It ensures that characters that use are using is displayed correctly. Example emojis, multiplication symbols etc are displayed properly
+b. <title>....</title> 
+and more things about head tag we will discuss latter in the lecture
+
+4. <body>.....</body>
+a. This is were the content of website goes, like links, images, heading etc
+
+This is the typical structure of website boiler plate code looks like
+
+Installing VS Code
+__________________
+
+Link to download VS Code: https://code.visualstudio.com/download
+
+Note: To generate boilerplate code of html use <!> exclamation mark in VS Code
+
+5. <meta name="viewport" content="width=device-width, initial-scale=1.0">
+_______________________________________________________________________
+a. width=device-width — Sets the viewport width to match the device's screen width.
+b. initial-scale=1.0 — Sets the initial zoom level to 100% when the page first loads.
+c. viewport — The visible area of a web page in the browser (display area). The viewport meta tag is used to configure how this area is displayed on different devices.
+
+7. HTML Heading Elements
+______________________________
+HTML provides six heading elements to define headings and subheadings on a webpage:
+
+<h1>Main Heading</h1>
+<h2>Sub Heading</h2>
+<h3>Section Heading</h3>
+<h4>Subsection Heading</h4>
+<h5>Minor Heading</h5>
+<h6>Smallest Heading</h6>
+
+8. HTML Paragraph Element
+______________________________
+The paragraph element is used to define a paragraph of text in HTML.
+
+<p>Welcome to HTML.</p>
+<p>HTML is used to create web pages.</p>
+
+9. Self-Closing (Void) Tags in HTML
+____________________________________
+
+Self-closing tags are HTML elements that do not have a closing tag because they do not contain any content.
+
+<br>  or <br/>    <!-- Line break -->
+<hr>      <!-- Horizontal rule -->
+<img src="image.jpg" alt="Image">
+<input type="text">
+<meta charset="UTF-8">
+<link rel="stylesheet" href="style.css">
+
+10. HTML List Elements
+___________________________
+HTML provides three main types of lists:
+
+1. Ordered List (<ol>)
+
+Used when the order of items matters.
+
+<ol>
+  <li>HTML</li>
+  <li>CSS</li>
+  <li>JavaScript</li>
+</ol>
+
+Output:
+
+1. HTML
+2. CSS
+3. JavaScript
+
+2. Unordered List (<ul>)
+
+Used when the order of items does not matter.
+
+<ul>
+  <li>Apple</li>
+  <li>Banana</li>
+  <li>Mango</li>
+</ul>
+
+Output:
+
+Apple
+Banana
+Mango
+
+3. Description List (<dl>)
+
+Used for terms and their descriptions.
+
+<dl>
+  <dt>HTML</dt>
+  <dd>HyperText Markup Language</dd>
+
+  <dt>CSS</dt>
+  <dd>Cascading Style Sheets</dd>
+</dl>
+
+Note:
+<dl> = Description List container
+<dt> = Term (name)
+<dd> = Description (meaning/explanation)
+
+HTML
+   HyperText Markup Language
+CSS
+   Cascading Style Sheets
+
+11. Nesting and Indentation in HTML
+_____________________________________-
+
+1. Nesting
+
+Nesting means placing one HTML element inside another element.
+
+Example: 
+
+<p>This is a <b>bold</b> word.</p>
+
+Here:
+
+<b> is nested inside <p>
+
+Another Example:
+
+<ul>
+  <li>Item 1</li>
+  <li>Item 2</li>
+</ul>
+
+Here:
+
+<li> elements are nested inside <ul>
+
+2. Indentation
+
+Indentation means adding spaces or tabs to make code easy to read and understand.
+
+Example (with proper indentation):
+
+<ul>
+  <li>HTML</li>
+  <li>CSS</li>
+  <li>JavaScript</li>
+</ul>
+
+
+Bad example (no indentation):
+
+<ul>
+<li>HTML</li>
+<li>CSS</li>
+<li>JavaScript</li>
+</ul>
+
+Nesting = One element inside another element
+Indentation = Proper spacing for readability
+
+Example:
+<ul>
+  <li>Item</li>
+</ul>
+
+12. HTML Anchor Element (<a>)
+________________________________
+
+The anchor element is used to create links (hyperlinks) in HTML. It allows users to navigate from one page to another or to different sections of the same page.
+
+<a href="URL">Link Text</a>
+
+<a> = Anchor tag
+href = Hyperlink reference (destination address)
+
+Example:
+<a href="https://www.google.com">Visit Google</a>
+
+Types of Links
+1. External Link (another website)
+<a href="https://www.wikipedia.org">Wikipedia</a>
+
+2. Internal Link (same website page)
+<a href="about.html">About Page</a>
+
+Example:
+_________
+
+<a href="https://google.com" target="_blank" title="Go to Google">
+  Open Google
+</a>
+
+Useful Attributes
+____________________
+href → destination URL
+target="_blank" → opens link in a new tab
+title → shows tooltip on hover
+
+13. HTML Image Element (<img>) with Folder Concepts
+_____________________________________________________
+
+The image element is used to display images in a webpage.
+
+1. Basic Syntax
+<img src="image.jpg" alt="Description">
+
+<img> = Image tag (self-closing / void element)
+src = Source (path of the image)
+alt = Alternative text (shown if image fails or for accessibility)
+
+2. Image from Same Folder
+
+If image is in the same folder as HTML file:
+
+project/
+ ├── index.html
+ └── image.jpg
+
+<img src="image.jpg" alt="My Image">
+
+3. Image from Subfolder
+
+If image is inside a folder:
+project/
+ ├── index.html
+ └── images/
+      └── photo.jpg
+<img src="images/photo.jpg" alt="Photo">
+
+
+4. Image from Parent Folder
+
+If HTML file is inside a folder and image is outside:
+
+project/
+ ├── image.jpg
+ └── pages/
+      └── index.html
+<img src="../image.jpg" alt="Image">
+
+
+5. Image from External URL
+<img src="https://example.com/photo.jpg" alt="Online Image">
+
+
+Note:
+_____
+
+<img> is a self-closing tag
+Always use alt for accessibility
+Correct file path is very important
+
+Quick Summary
+____________
+image.jpg        → same folder
+images/pic.jpg   → inside folder
+../image.jpg     → parent folder
+
+
+14. HTML <div> Tag
+________________________
+The <div> tag is a container element used to group other HTML elements together.
+
+1. Basic Syntax
+<div>
+  Content goes here
+</div>
+
+2. What is <div> used for?
+It groups elements together
+It helps in layout design
+It is used heavily in CSS styling
+It does not display anything by itself
+
+👉 Think of it as a box/container
+
+<div>
+  <h1>Welcome</h1>
+  <p>This is a paragraph inside a div.</p>
+</div>
+
+Here:
+
+<h1> and <p> are inside the same container
+
+4. Multiple Divs (Page Structure)
+<div>
+  <h2>Header Section</h2>
+</div>
+
+<div>
+  <p>Main Content</p>
+</div>
+
+<div>
+  <p>Footer Section</p>
+</div>
+
+5. Styling with CSS
+<div style="background-color: lightblue; padding: 10px;">
+  This is a styled div
+</div>
+
+15. span tag
+______________
+Used for small text parts or styling inside content
+
+<div>
+  <h2>Product</h2>
+  <p>Price: <span style="color:green;">$50</span></p>
+</div>
+
+
+CSS Notes
+_______________
+
+CSS - Cascading Style Sheets
+
+Its a language that we help us specify how the page should look like
+
+Stylesheet Languages
+_____________________
+
+A stylesheet language is used to control the presentation and appearance of HTML
+
+Common Stylesheet Languages:
+
+1. CSS (Cascading Style Sheets)
+The standard stylesheet language for web pages.
+Used to style HTML elements (colors, fonts, layouts, spacing, etc.).
+
+Example:
+h1 {
+  color: blue;
+}
+
+2. Sass (Syntactically Awesome Style Sheets)
+A CSS preprocessor that extends CSS with features like variables, nesting, and mixins.
+Compiles into regular CSS.
+
+Example:
+$color: blue;
+
+h1 {
+  color: $color;
+}
+
+3. Less (Leaner Style Sheets)
+Another CSS preprocessor similar to Sass.
+Adds variables, functions, and nesting.
+Compiles into regular CSS.
+
+Example:
+@color: blue;
+
+h1 {
+  color: @color;
+}
+
+How To Css in HTML
+____________________
+
+We can do that in 3 ways
+
+1. Inline CSS
+
+-> CSS is written directly inside an HTML element using the style attribute. Style attribute is globally available for HTML elements tags like img, html, h1 etc.
+
+-> Syntax to add style attribute: name="property:value"
+
+-> Should be applied individually to each elements and not recommended for production use, should be used only for quick testing purpose
+
+Example 1:
+
+<h1 style="color: blue;">Welcome</h1>
+
+Example 2:
+
+<html lang="en" style="background-color: rgb(3, 3, 15);">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+   <h1 style="color: blue;">Welcome</h1>
+</body>
+</html>
+
+2. Internal CSS
+
+CSS is written inside a <style> tag in the <head> section. Use For styling a single web page
+
+Syntax:
+
+<head>
+    <style>
+        selector {
+            property: value;
+            property: value;
+        }
+    </style>
+</head>
+
+
+
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        html {
+            background: black;
+        }
+        h1{
+            color: red;
+        }
+    </style>
+</head>
+<body>
+   <h1>Welcome</h1>
+</body>
+</html>
+
+3. External CSS
+
+CSS is written in a separate .css file and linked to the HTML document. Best for large websites. Reusable across multiple pages
+
+Add in head:
+
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+   <h1>Welcome</h1>
+</body>
+</html>
+
+Note:
+rel: relationship
+href: provides the location of the file
+
+create style.css
+h1 {
+  color: green;
+}
+
+____________________
+Element Selectors
+___________________
+
+Example 1:
+index.html
+------------
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+   <h1>Red</h1>
+   <h1>Blue</h1>
+   <h1>Green</h1>
+</body>
+</html>
+
+style.css
+----------
+h1{
+    color: brown;
+}
+
+
+________________
+Class Selector
+________________
+Example 1:
+
+index.html
+---------
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+   <h1 class="red-class">Red</h1>
+   <h1 class="blue-class">Blue</h1>
+   <h1 class="green-class">Green</h1>
+</body>
+</html>
+
+style.css
+---------
+.red-class{
+    color: brown;
+}
+
+.blue-class{
+    color: blue;
+}
+
+.green-class{
+    color: green;
+}
+
+Example 2:
+index.html
+-----------
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+   <h1 class="myClass">Red</h1>
+   <p class="myClass">Hello World</p>
+</body>
+</html>
+
+
+style.css
+----------
+.myClass {
+    color: blue;
+}
+
+____________________
+Id Selector
+____________________
+
+An ID selector is used to apply CSS styles to one unique HTML element. Ensure to keep id as unique for each html elements
+
+Basic Syntax:
+
+#idName {
+    property: value;
+}
+
+
+Example:
+style.css
+--------
+#header {
+    color: blue;
+}
+
+index.html
+-----------
+
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+   <h1 id="header">Welcome</h1>
+   <h2 >Welcome</h2>
+</body>
+</html>
+
+_______________________
+Attribute Selector in CSS
+_______________________
+
+An attribute selector is used to select HTML elements based on their attributes or attribute values.
+
+Basic Syntax:
+[attribute] {
+    property: value;
+}
+
+Example 1:
+index.html
+----------
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+   <input type="text" name="name">
+   <input type="password" name="password">
+</body>
+</html>
+
+style.css
+---------
+[type]{
+    color: blue;
+}
+
+or
+
+input[type]{
+    color: blue;
+}
+
+
+Example 2:
+----------
+index.html
+----------
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+   <input type="text" name="name">
+   <input type="password" name="password">
+</body>
+</html>
+
+style.css
+---------
+[type="text"]{
+    color: blue;
+}
+
+[type="password"]{
+    color: red;
+}
+
+or
+
+input[type="text"]{
+    color: blue;
+}
+
+input[type="password"]{
+    color: red;
+}
+
+__________________________
+Universal Selector in CSS
+__________________________
+
+The universal selector selects all HTML elements on a webpage.
+
+Basic Syntax:
+
+* {
+    property: value;
+}
+
+* (asterisk) is the universal selector.
+It applies the specified styles to every element.
+
+Example
+
+index.html
+-----------
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <h1>Heading</h1>
+    <p>Paragraph</p>
+    <div>Content</div>
+</body>
+
+</html>
+
+Style.css
+---------
+* {
+    color: blue;
+}
+
+
+CSS Properties
+--------------
+
+_________________
+Css Color
+_________________
+
+CSS provides several color properties that let you control the appearance of text, backgrounds, borders, and more. Here’s a clear breakdown of the most important ones:
+
+Note: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/named-color
+
+Note: https://colorhunt.co/
+
+We can use above websites to select colors
+
+Link for all colours
+
+Example:
+
+style.css
+---------
+html{
+    background-color: red;
+}
+h1{
+    color: blue;
+}
+
+or use hex code
+
+h1{
+    color: #FBF5A7;
+}
+
+note: background-color -- applied complete html page
+color: to apply color on text
+
+index.html
+----------
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+   <h1>some text</h1>
+
+</body>
+
+</html>
+
+Font Size:
+
+How to set font size?
+
+1 px = 1/96th inch = 0.26mm (width and height)
+
+So for, 20px = 20*0.26 = 5.2 mm (width and height)
+
+
+also we can set the font as 1 pt(point)
+
+1 pt-->1/72 inches = 0.35 mm
+so, 20 pt = 0.35*20 = 7.0 mm
+
+em is a relative unit. It means:
+
+1em = the current font size of the element's parent (for font-size).
+
+1em = parent's font size
+     = 20px
+
+2 em = parents font size*2
+
+Example:
+
+style.css
+
+html{
+    background-color: red;
+}
+div{
+    font-size: 20px;
+}
+
+p{
+    font-size: 2em;
+}
+
+index.html
+----------
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div class="parent">
+        <p class="child">Hello</p>
+    </div>
+
+</body>
+
+</html>
+
+
+What is 1rem in CSS?
+
+rem stands for Root EM.
+
+1rem = font size of the root element (<html>)
+
+Default case
+
+Most browsers set:
+
+html {
+    font-size: 16px;
+}
+
+So:
+
+1rem = 16px
+
+Example 1
+
+html {
+    font-size: 16px;
+}
+
+p {
+    font-size: 1rem;
+}
+
+Result:
+
+1rem = 16px
+
+So paragraph text = 16px.
+
+Example 2
+
+html {
+    font-size: 16px;
+}
+
+h1 {
+    font-size: 2rem;
+}
+
+Calculation:
+
+2rem = 2 × 16px = 32px
+
+################################
+Note:
+If everything was fixed in px, then:
+
+A phone screen
+A laptop
+A 4K monitor
+
+would all show text the same size.
+
+That causes problems:
+
+Too small on big screens
+Too large on small screens
+so, we use em and rem
+##################################################
+
+❌ Problem: Using only px (fixed design)
+HTML
+<div class="container">
+    <h1>Welcome</h1>
+    <p>This is a paragraph.</p>
+    <button>Click Me</button>
+</div>
+
+CSS (bad approach)
+html {
+    font-size: 16px;
+}
+
+h1 {
+    font-size: 32px;
+}
+
+p {
+    font-size: 16px;
+}
+
+button {
+    font-size: 16px;
+    padding: 10px 20px;
+}
+🚨 What goes wrong?
+
+Now imagine user changes browser setting:
+
+“Increase default text size for better readability”
+
+OR uses zoom / accessibility settings.
+
+Result:
+Text becomes harder to scale consistently
+Buttons feel too small
+Spacing feels off
+You must manually adjust every value
+
+✅ Solution: Using rem (scalable design)
+CSS (good approach)
+
+html {
+    font-size: 16px;
+}
+
+h1 {
+    font-size: 2rem;   /* 32px */
+}
+
+p {
+    font-size: 1rem;   /* 16px */
+}
+
+button {
+    font-size: 1rem;
+    padding: 0.625rem 1.25rem;
+}
+🔥 Now the magic part
+
+If we change just ONE line:
+
+html {
+    font-size: 20px;
+}
+Everything scales automatically:
+Element	Before	After
+1rem text	16px	20px
+h1 (2rem)	32px	40px
+button text	16px	20px
+padding	scaled	scaled
+📱 Why this is powerful
+
+Now your UI:
+
+adjusts for mobile users
+supports accessibility settings
+scales consistently everywhere
+requires no redesign
+
+
+##############################
+More About Device pixels
+#############################
+
+-> Device pixel = Total number of pixel in the screen
+Example: 6 inches screen has 1800 pixels
+
+-> Pixel per Inch = How dense the pixel are in 1 inch
+
+example:
+ppi = total screen pixels / screen size
+
+Example: ppi = 1800/6 = 300 pixels
+
+More pixels per inch means more sharp images
+
+Note: CSS pixel is font size in browser.
+
+Depending on the screen size font size automatically gets adjusted.
+
+The viewport is the visible area of a web page on your screen.
+
+In simple terms:
+👉 It is the part of the page you can see without scrolling.
+
+🖥️ Example
+
+When you open a website:
+
+Your screen shows only a portion of the page
+That visible portion = viewport
+
+If you scroll down, the viewport changes.
+
+👉 The viewport is the visible area of the web page inside the browser window.
+
+And yes:
+
+vw = viewport width (1% of visible width)
+vh = viewport height (1% of visible height)
+
+So when the browser size changes:
+✔ vw and vh automatically adjust
+✔ Layout becomes responsive
+
+Note:
+
+font-size:
+a. Applies only to text
+b. Controls how big letters appear
+
+Viewport (screen-related)
+Viewport = visible browser area
+
+Then we use:
+
+vw → % of viewport width
+vh → % of viewport height
+
+Example:
+
+style.css
+----
+div{
+    background-color: blue;
+    width: 50vw;
+    height: 50vh;
+    font-size: 30px;
+}
+
+index.html
+------
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div>Full Screen Section</div>
+</body>
+</html>
+
+
+Developer Tools Usage
+----------------------------
+
+In chrome Shortcut: control+shift+i
+
+##################################
+
+Box Model 
+----------
+
+style.css
+-----
+#red{
+    background-color: red;
+    width: 100%;
+    height: 100%;
+    border: 30px solid rgb(236, 225, 225);
+   
+}
+#blue{
+    background-color: blue;
+    width: 100%;
+    height: 100%;
+    border: 10px solid rgb(13, 242, 13);
+    border-top: 0px;
+    border-width: 0px 10px 20px 30px;
+}
+#black{
+    background-color: black;
+    width: 100%;
+    height: 100%;
+    border: 10px solid rgb(242, 13, 200);
+    color: white;
+}
+
+
+index.html
+------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="blue">
+        blue
+        blue
+        blue
+    </div>
+    <div id="red">
+        red
+        red
+        red
+    </div>
+    <div id="black">
+        black
+        black
+        black
+    </div>
+</body>
+</html>
+
+
+padding and margin property
+----------------
+style.css
+------
+
+
+#blue{
+    border: 30px solid rgb(1, 13, 1);
+    text-align: center;
+    padding: 50px;
+    margin: 50px;
+    width: 25%;
+    height: 50%;
+}
+
+index.html
+------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="blue">
+        blue blue  <br>
+        blue blue  <br>
+        blue blue  <br>
+        blue blue  <br>
+        blue blue  <br>
+       
+    </div>
+    
+</body>
+</html>
+
+How to develop responsive websites
+------------------------------------
+
+We can do this in various ways
+1. media query: Media queries let you apply different CSS rules based on the device or viewport size. They are one of the main tools used to make websites responsive.
+
+@media(max-width: 600px){
+  /* CSS for scree below or equal to 600 px */
+}
+
+Example:
+style.css
+---------
+header {
+    background-color: blue;
+    color: white;
+    height: 10vh;
+    text-align: center;
+    line-height: 10vh;
+    font-size: 24px;
+}
+
+@media (max-width: 600px) {
+    header {
+        font-size: 16px;
+    }
+}
+
+index.html
+---------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        My Website
+    </header>
+
+
+</body>
+    
+</body>
+</html>
+
+2. CSS Grid: CSS Grid is a layout system that divides a webpage into rows and columns, making it easy to create responsive page layouts.
+-----------
+
+style.css
+--------
+.container {
+    display: grid;
+
+    /* 2 columns */
+    grid-template-columns: 1fr 1fr;
+
+    grid-template-rows: 100px 200px;
+
+    gap: 10px;
+}
+
+.box {
+    background-color: blue;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.first{
+    background-color: blue;
+    color: white;
+    padding: 20px;
+   grid-column: span 2 ;
+    
+}
+
+index.html
+----------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+   <div class="container">
+        <div class="first">header</div>
+        <div class="box">1</div>
+        <div class="box">2</div>
+        <div class="box">3</div>
+        <div class="box">4</div>
+    </div>
+</body>
+    
+</body>
+</html>
+
+
+3. CSS Flexbox
+------------
+CSS Flexbox (Flexible Box Layout) is a layout system used to arrange items in a single direction (row or column) and easily control spacing, alignment, and order.
+
+🆚 Flexbox   vs  Grid (simple)
+-----------------------------
+
+One direction	Two directions
+Row OR column	Row AND column
+Simple layouts	Complex layouts
+
+Important note: Both Grid and flex can be used together
+
+4. External framework: Bootstrap
+-----------------------
+
+CSS Framework developer by twitter developer (Mark otto and Jacob)
+
+Bootstrap is a ready-made collection of CSS and JavaScript components that helps you design websites faster.
+
+🔥 Why Bootstrap is used
+
+Instead of writing everything from scratch like:
+
+Flexbox
+Grid
+Buttons
+Forms
+Navbar
+
+👉 Bootstrap already gives you all of these pre-built.
+
+Note:
+A CDN is a system of servers that delivers files (like CSS, JS, images) to users from the nearest location for faster loading.
+
+🧠 Why CDN is used
+✔ Faster loading
+
+Files come from nearby servers
+
+✔ No download needed
+
+You don’t install Bootstrap manually
+
+✔ Always updated
+
+You get latest version easily
+
+✔ Less load on your server
+
+Your website doesn’t carry heavy files
+
+Example 1:
+---------
+Note: https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css (In this link min.css loads files faster as all white spaces are removed which makes file size smaller and loading becomes faster)
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+<body>
+   
+        <!-- Buttons -->
+    <button class="btn btn-primary">Primary Button</button>
+
+    <button class="btn btn-success">Success Button</button>
+
+    <button class="btn btn-danger">Danger Button</button>
+
+    <button class="btn btn-warning">Warning Button</button>
+   
+</body>
+    
+</body>
+</html>
+
+🔵 What is browser compatibility?
+
+👉 It means a website works properly on different browsers like:
+
+Chrome
+Firefox
+Edge
+Safari
+
+🧠 How Bootstrap helps
+
+When you use Bootstrap:
+
+👉 You don’t need to worry about writing different CSS for different browsers
+👉 Bootstrap already handles those differences internally
+
+
+Example 2:
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+<body>
+   
+  <div class="card" style="width: 18rem;">
+    <img src="cat.jpg" class="card-img-top" alt="...">
+    <div class="card-body">
+        <h5 class="card-title">Cute Cat</h5>
+        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
+        <a href="#" class="btn btn-primary">Go somewhere</a>
+    </div>
+ </div>
+   
+</body>
+    
+</body>
+</html>
+
+Bootstrap 12-column grid system
+--------------------------
+
+Structure:
+ 
+ div container
+       div row
+          div col (items)
+
+Example:
+
+<div class="container">
+  <div class="row">
+    <div class="col">Hello</div>
+  </div>
+</div>
+
+The .container class in Bootstrap is responsive, meaning its width changes based on the screen size.
+
+Bootstrap Container Sizes
+
++------------------+-------------+-------------+-------------+-------------+-------------+-------------+
+| Class            | <576px      | >=576px     | >=768px     | >=992px     | >=1200px    | >=1400px    |
++------------------+-------------+-------------+-------------+-------------+-------------+-------------+
+| .container       | 100%        | 540px       | 720px       | 960px       | 1140px      | 1320px      |
+| .container-sm    | 100%        | 540px       | 720px       | 960px       | 1140px      | 1320px      |
+| .container-md    | 100%        | 100%        | 720px       | 960px       | 1140px      | 1320px      |
+| .container-lg    | 100%        | 100%        | 100%        | 960px       | 1140px      | 1320px      |
+| .container-xl    | 100%        | 100%        | 100%        | 100%        | 1140px      | 1320px      |
+| .container-xxl   | 100%        | 100%        | 100%        | 100%        | 100%        | 1320px      |
+| .container-fluid | 100%        | 100%        | 100%        | 100%        | 100%        | 100%        |
++------------------+-------------+-------------+-------------+-------------+-------------+-------------+
+
+Example: Resize the window and check
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+   
+  <div class="container-fluid">
+        <h1>Bootstrap Container</h1>
+        <p>Resize the browser window and observe the width.</p>
+ </div>
+   
+</body>
+    
+</body>
+</html>
+
+Sized Columns:
+---------------
+
+Example 1:
+<div class="container">
+  <div class="row">
+    <div class="col-4 bg-danger text-white">col-4</div>
+    <div class="col-4 bg-success text-white">col-4</div>
+    <div class="col-4 bg-primary text-white">col-4</div>
+  </div>
+</div>
+
+Example 2:
+<div class="container">
+  <div class="row">
+    <div class="col-3 bg-warning">Sidebar</div>
+    <div class="col-9 bg-info">Main Content</div>
+  </div>
+</div>
+
+Example 3:
+<div class="container">
+  <div class="row">
+    <div class="col-3 bg-danger">1</div>
+    <div class="col-3 bg-success">2</div>
+    <div class="col-3 bg-primary">3</div>
+    <div class="col-3 bg-warning">4</div>
+  </div>
+</div>
+
+Example 4:
+Mobile:
+|-----12-----|
+|-----12-----|
+
+Desktop:
+|----6----|----6----|
+
+Behavior:
+
+Mobile (<768px): each column takes full width (col-12)
+Tablet/Desktop (≥768px): each column takes half width (col-md-6)
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-12 col-md-6 bg-danger">
+      Column 1
+    </div>
+
+    <div class="col-12 col-md-6 bg-success">
+      Column 2
+    </div>
+  </div>
+</div>
+
+	​
+Example 5:
+Two Columns (col-12 col-md-6)
+
+<div class="container">
+  <div class="row">
+    <div class="col-12 col-md-6 bg-danger text-white">Column 1</div>
+    <div class="col-12 col-md-6 bg-success text-white">Column 2</div>
+  </div>
+</div>
+
+Mobile (<768px):
+|-----12-----|
+|-----12-----|
+
+Tablet/Desktop (≥768px):
+|----6----|----6----|
+
+Example 6:
+Three Columns (col-12 col-md-4)
+
+<div class="container">
+  <div class="row">
+    <div class="col-12 col-md-4 bg-primary text-white">1</div>
+    <div class="col-12 col-md-4 bg-warning">2</div>
+    <div class="col-12 col-md-4 bg-success text-white">3</div>
+  </div>
+</div>
+
+Mobile (<768px):
+|-----12-----|
+|-----12-----|
+|-----12-----|
+
+Tablet/Desktop (≥768px):
+|---4---|---4---|---4---|
+
+Example 7:
+Four Columns (col-6 col-md-3)
+
+<div class="container">
+  <div class="row">
+    <div class="col-6 col-md-3 bg-danger text-white">1</div>
+    <div class="col-6 col-md-3 bg-success text-white">2</div>
+    <div class="col-6 col-md-3 bg-primary text-white">3</div>
+    <div class="col-6 col-md-3 bg-warning">4</div>
+  </div>
+</div>
+
+Mobile (<768px):
+|----6----|----6----|
+|----6----|----6----|
+
+Tablet/Desktop (≥768px):
+|--3--|--3--|--3--|--3--|
+
+Example 8:
+Sidebar Layout (col-12 col-md-3 + col-12 col-md-9)
+
+<div class="container">
+  <div class="row">
+    <div class="col-12 col-md-3 bg-warning">Sidebar</div>
+    <div class="col-12 col-md-9 bg-info">Main Content</div>
+  </div>
+</div>
+
+Mobile (<768px):
+|--------12--------|
+|--------12--------|
+
+Tablet/Desktop (≥768px):
+|--3--|------9------|
+
+Example 8: youtube layout
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+   
+<div class="container-fluid">
+  <div class="row">
+
+    <div class="col-12 col-md-2 bg-dark text-white p-3">
+      Sidebar
+    </div>
+
+    <div class="col-12 col-md-10 bg-light p-3">
+      Video Content Area
+    </div>
+
+  </div>
+</div>
+   
+</body>
+    
+</body>
+</html>
+
+Mobile (<768px):
+|--------12--------|
+|    Sidebar       |
+|    Content       |
+
+Desktop (≥768px):
+|--2--|-----------10-----------|
+
+Example 9:E-Commerce Product Grid (Amazon Style)
+---------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+   
+<div class="container">
+  <div class="row">
+
+    <div class="col-6 col-md-3 mb-3">
+      <div class="p-3 bg-light border">Product 1</div>
+    </div>
+
+    <div class="col-6 col-md-3 mb-3">
+      <div class="p-3 bg-light border">Product 2</div>
+    </div>
+
+    <div class="col-6 col-md-3 mb-3">
+      <div class="p-3 bg-light border">Product 3</div>
+    </div>
+
+    <div class="col-6 col-md-3 mb-3">
+      <div class="p-3 bg-light border">Product 4</div>
+    </div>
+
+  </div>
+</div>
+   
+</body>
+    
+</body>
+</html>
+
+Mobile:
+|----6----|----6----|
+|----6----|----6----|
+
+Desktop:
+|--3--|--3--|--3--|--3--|
+
+Explanation
+______________
+
+📦 What does mb-3 mean?
+m  = margin
+b  = bottom
+3  = size (Bootstrap spacing scale)
+
+
+🧱 1. <div>
+
+A simple container element used to hold content.
+
+Here it is acting like a product card box.
+
+🎯 2. p-3 (Padding)
+p = padding
+3 = Bootstrap spacing size
+Meaning:
+
+Adds padding inside the box on all sides.
+
+Small space inside the box:
+| Product 1 |
+
+Bootstrap scale:
+
+p-1 = small padding
+p-3 = medium padding
+p-5 = large padding
+🎨 3. bg-light (Background color)
+
+Gives a light gray background.
+
+Light background box:
+┌──────────────┐
+│ Product 1    │
+└──────────────┘
+
+It is useful to highlight content softly without strong colors.
+
+🧾 4. border
+
+Adds a thin border around the box.
+
+┌──────────────┐
+│ Product 1    │
+└──────────────┘
+
+Without border → flat look
+With border → card-like structure
+
+🧠 Final Combined Effect
+┌──────────────────┐
+│ Product 1        │
+└──────────────────┘
+p-3 → gives spacing inside
+bg-light → makes background light gray
+border → adds outline
+
+
+Example: E-Commerce adding products:
+---------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+   
+<div class="container">
+  <div class="row">
+
+    <div class="col-12 col-md-4 mb-3 mt-3">
+      <!-- Card 1 -->
+      <div class="card">
+        <img src="https://via.placeholder.com/300x200" class="card-img-top">
+        <div class="card-body">
+          <h5>Product 1</h5>
+          <p>Good product</p>
+          <a class="btn btn-primary w-100">Buy</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4 mb-3 mt-3">
+      <!-- Card 2 -->
+      <div class="card">
+        <img src="https://via.placeholder.com/300x200" class="card-img-top">
+        <div class="card-body">
+          <h5>Product 2</h5>
+          <p>Nice product</p>
+          <a class="btn btn-primary w-100">Buy</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4 mb-3 mt-3">
+      <!-- Card 3 -->
+      <div class="card">
+        <img src="https://via.placeholder.com/300x200" class="card-img-top">
+        <div class="card-body">
+          <h5>Product 3</h5>
+          <p>Best product</p>
+          <a class="btn btn-primary w-100">Buy</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+    
+</body>
+</html>
+
+</body>
+    
+</body>
+</html>
+
