@@ -1970,8 +1970,8 @@ c. F layout - reading pattern / z- layout reading pattern
 d. All platform design
 e. Avoid evil design
 
-DOM - Document Object Model
-############################
+DOM - Document Object Model (DOM TREE VISUALIZER)
+#################################################
 Example:
 <!DOCTYPE html>
 <html lang="en">
@@ -2645,6 +2645,724 @@ let nums: number[] = [10, 20, 30];
 for (let i = 0; i < nums.length; i++) {
     console.log(nums[i]);
 }
+
+Functions in java
+-------------------
+-> Syntax
+----------
+
+function functionName(parameter: type): returnType {
+  // code
+  return value;
+}
+
+Example 1:
+
+function greet(name: string): string {
+  return "Hello " + name;
+}
+
+console.log(greet("Sam"));
+
+
+Example 2:
+----------
+function display(name: string): void {
+  console.log(name);
+}
+
+display("mike");
+
+
+Example 3:
+----------
+function add(a: number, b: number): number {
+  return a + b;
+}
+
+console.log(add(10, 20));
+
+Example 4: Optional Parameter
+----------------------------
+function greet(name?: string) {
+  if (name) {
+    console.log("Hello " + name);
+  } else {
+    console.log("Hello Guest");
+  }
+}
+
+greet("Sam");
+greet();
+
+Example 5: Default Value
+------------------------
+function greet(name: string = 'Guest') {
+  console.log(name);
+}
+
+greet("Sam");
+greet();
+
+
+Example 6: anonymous function
+------------------------------
+
+Named Function
+→ call using function name
+
+Anonymous Function
+→ store in variable OR pass to another function. Otherwise you cannot call it later
+
+syntax 1:
+const variableName = function() {
+ //code
+};
+
+Syntax 2:
+function1()(anonymousFunction() {
+ //code
+);
+
+Example:
+const greet = function() {
+  console.log("Hello");
+};
+
+greet();
+
+Example:
+setTimeout(function() {
+  console.log("Hello");
+}, 2000);
+
+
+#####################################
+An arrow function is a shorter way of writing a function.
+####################################
+
+syntax 1:
+( ) => {
+   // code
+}
+
+syntax 2:
+(parameter) => {
+   // code
+}
+
+
+
+
+Example 1:
+----------
+const greet = () => {
+  console.log("Hello");
+};
+
+greet();
+
+Example 2:
+---------
+const greet = (name: string) => {
+  console.log("Hello " + name);
+};
+
+greet("Sam");
+
+
+Example 3:
+---------
+const add = (a: number, b: number) => {
+  return a + b;
+};
+
+console.log(add(10, 20));
+
+Example 4:
+---------
+const users = [
+  { id: 'u1', name: 'Mike' },
+  { id: 'u2', name: 'Adam' }
+];
+
+const user = users.find(
+  u => u.id === 'u2'
+);
+
+console.log(user);
+
+
+Difference between let versus var
+-----------------------------------
+let is blocked scoped:
+
+Example 1:
+----------
+
+function test() {
+  if (true) {
+    let x = 10; //CREATED IN IF BLOCK
+  }
+  console.log(x); // ❌ Error
+}
+test();
+
+Example 2:
+---------
+function test() {
+  if (true) {
+    let x = 10;
+    console.log(x);
+  }
+  
+}
+test();
+
+
+var is not blocked scoped it is function scoped
+-------------------------
+Example 3:
+
+function test() {
+  if (true) {
+    var x = 10;
+   
+  }
+   console.log(x);
+}
+test();
+
+Note:
+Example:  Cannot access variable before intialization
+console.log(x);//Error when you run
+let x:number;
+
+Example:Can access variable before initialization
+console.log(x);
+var x:number; //Undefined
+
+
+Definite Assignment (Trust me operator) ( ! ): Trust me i will initialize variable latter.
+---------------------------------------------------------
+var x!:number;
+console.log(x);
+
+Note: Very useful in angular as we will see many practical scenarios where variables are created but initialized latter
+
+
+Interfaces
+--------------
+In TypeScript, interfaces define the structure of an object. They are used to enforce type checking and improve code readability and maintainability.
+
+Example 1:
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+const user: User = {
+  id: 1,
+  name: "Alice",
+  email: "alice@example.com"
+};
+
+Example 2:
+--------
+interface User {
+  id: number;
+  name: string;
+  age?: number;
+}
+
+const user: User = {
+  id: 1,
+  name: "Alice"
+};
+
+Example 3: readonly property
+-------------------------
+interface User {
+  readonly id: number;
+  name: string;
+}
+
+const user: User = {
+  id: 1,
+  name: "Alice"
+};
+
+//user.id = 2; // Error
+
+console.log(user.id);
+
+Example 4:
+---------
+interface Add {
+  (a: number, b: number): number;
+}
+
+const add: Add = (x, y) => x + y;
+
+console.log(add(10,20));
+
+Example 5:
+---------
+interface Person {
+  name: string;
+  greet(): void;
+}
+
+const person: Person = {
+  name: "John",
+  greet() {
+    console.log(`Hello, I'm ${this.name}`);
+  }
+};
+
+console.log(person.name);
+person.greet();
+
+
+Example 6:
+----------
+interface Animal {
+  name: string;
+}
+
+interface Dog extends Animal {
+  breed: string;
+}
+
+const dog: Dog = {
+  name: "Buddy",
+  breed: "Golden Retriever"
+};
+
+console.log(dog.breed);
+console.log(dog.name);
+
+Example 7: multiple inheritance
+----------------------------------
+interface Flyable {
+  fly(): void;
+}
+
+interface Swimmable {
+  swim(): void;
+}
+
+interface Duck extends Flyable, Swimmable {
+  quack(): void;
+}
+
+const duck: Duck = {
+  fly() {
+    console.log("Flying");
+  },
+  swim() {
+    console.log("Swimming");
+  },
+  quack() {
+    console.log("Quack");
+  }
+};
+
+duck.fly();
+duck.quack();
+duck.swim();
+
+Example 8:
+------------
+interface A {
+  a: string;
+}
+
+interface B {
+  b: number;
+}
+
+interface C extends A, B {
+  c: boolean;
+}
+
+const obj: C = {
+  a: "hello",
+  b: 42,
+  c: true
+};
+
+console.log(obj.a);
+console.log(obj.b);
+console.log(obj.c);
+
+
+Classes: Classes in TypeScript are similar to JavaScript classes but add features like access modifiers, type annotations, interfaces, and abstract classes.
+------------------------------------------------------------------------------------------------------------------------------
+
+Note : 
+a. while creating instance variable / non-static variable inside class donot use var keyword
+b. var keyword should be used inside block
+c. object refence store in var keyword
+d. we use constructor() to create constructor inside the class
+
+Example 1:
+-----------
+class Person {
+    name: string; //instance or non-static variable
+    constructor(name: string){
+        this.name = name;
+    }
+    greet():void{
+        console.log(this.name);
+        
+    }
+}
+
+var person = new Person("mike");
+person.greet();
+
+Example 2: public(default)
+--------
+class Person {
+    public name: string; //instance or non-static variable can access anywhere
+    constructor(name: string){
+        this.name = name;
+    }
+    greet():void{
+        console.log(this.name);
+        
+    }
+}
+
+var person = new Person("mike");
+person.greet();
+console.log(person.name); //Correct
+
+
+Example 3: private can be accesed only with the class
+----------
+class Person {
+    private name: string; //instance or non-static variable can access anywhere
+    constructor(name: string){
+        this.name = name;
+    }
+    greet():void{
+        console.log(this.name);
+        
+    }
+}
+
+var person = new Person("mike");
+person.greet();
+console.log(person.name); //In correct
+
+Note: Access Specifier
+------------------------
+1. public (default)
+
+A public member can be accessed from anywhere. You can omit public because it is the default.
+
+2. private
+
+A private member can only be accessed within the same class.
+
+3. protected
+
+A protected member can be accessed:
+
+Inside the class
+Inside subclasses (derived classes)
+
+But not from outside the class hierarchy.
+
+Example: Protected
+----------------
+class Person {
+    protected name: string;
+
+    constructor(name: string) {
+        this.name = name;
+    }
+}
+
+class Employee extends Person {
+    display() {
+        console.log(this.name); // ✅ Allowed
+    }
+}
+
+const e = new Employee("Mike");
+e.display();
+
+//console.log(e.name); // ❌ Error
+
+Another Example: protected
+--------------------------
+class Example {
+    public a = 1;
+    protected b = 2;
+    private c = 3;
+}
+
+class Child extends Example {
+    test() {
+        console.log(this.a); // ✅
+        console.log(this.b); // ✅
+        console.log(this.c); // ❌
+    }
+}
+
+const obj = new Example();
+
+console.log(obj.a); // ✅
+console.log(obj.b); // ❌
+console.log(obj.c); // ❌
+
+| Modifier      | Same Class | Subclass | Outside Class |
+| -----------        ----------           | --------       | ------------- |
+| `public`        | ✅                | ✅             | ✅             |
+| `protected` | ✅                | ✅             | ❌             |
+| `private`      | ✅                | ❌             | ❌             |
+
+
+Key point:
+
+Without export, a class is not accessible in another file, regardless of public/private/protected.
+-------------------------------------------------------------------------------------------
+
+Example:
+export class Person {
+    name: string = "Mike";
+}
+
+import { Person } from "./person.js";
+
+
+var person = new Person();
+console.log(person.name);
+
+Example:
+export class Person {
+   protected name: string = "Mike";
+}
+
+import { Person } from "./person.js";
+
+class Contact extends Person{
+
+}
+
+var contact = new Contact();
+console.log(contact.name);//Error Outise class cannot access protected
+
+Example
+-------
+export class Person {
+   protected name: string = "Mike";
+}
+
+import { Person } from "./person.js";
+
+class Contact extends Person{
+
+    greet(){
+        console.log(contact.name);
+    }
+
+}
+
+var contact = new Contact();
+contact.greet();
+
+
+
+Example:
+export class Person {
+   private name: string = "Mike";
+}
+import { Person } from "./person.js";
+
+class Contact extends Person{
+
+    greet(){
+        console.log(contact.name);//Error
+    }
+
+}
+
+var contact = new Contact();
+contact.greet();
+
+
+Example: Child class object calls parent class contructor
+--------
+class Animal {
+  constructor(public name: string) {}
+
+  move() {
+    console.log(`${this.name} is moving`);
+  }
+}
+
+class Dog extends Animal {
+  bark() {
+    console.log("Woof!");
+  }
+}
+
+const dog = new Dog("Buddy");
+dog.move();
+dog.bark();
+
+Example: super keyword
+----------------------
+class Animal {
+  constructor(public name: string) {}
+
+  move() {
+    console.log(`${this.name} is moving`);
+  }
+}
+
+class Dog extends Animal {
+  constructor(name:string){
+    super(name);
+  }
+  bark() {
+    console.log("Woof!");
+  }
+}
+
+const dog = new Dog("hello");
+dog.move();
+dog.bark();
+
+Example: method overriding
+-------------------------
+class Animal {
+  speak() {
+    console.log("Animal sound");
+  }
+}
+
+class Dog extends Animal {
+  override speak() {
+    console.log("Woof!");
+  }
+}
+
+var dog = new Dog();
+dog.speak();
+
+Example: getters and setters
+----------------------------
+class Person {
+    name!: string;
+
+    
+    get userName(){
+        return this.name;
+    }
+
+    set userName(name:string){
+        this.name=name;
+    }
+
+}
+
+var person = new Person();
+person.userName="mike";
+console.log(person.userName);
+
+
+Example: static member examples
+-----------------------------------
+class MathUtil {
+  static PI = 3.14159;
+
+  static square(x: number) {
+    return x * x;
+  }
+}
+
+console.log(MathUtil.PI);
+console.log(MathUtil.square(4));
+
+Example: abstract class
+-------------------------
+abstract class Shape {
+  abstract area(): number;
+
+  printArea() {
+    console.log(this.area());
+  }
+}
+
+class Circle extends Shape {
+  constructor(private radius: number) {
+    super();
+  }
+
+  area(): number {
+    return Math.PI * this.radius ** 2;
+  }
+}
+
+const c = new Circle(5);
+c.printArea();
+
+Example: Implementing interfaces
+---------------------------------
+interface Vehicle {
+  start(): void;
+}
+
+class Car implements Vehicle {
+  start() {
+    console.log("Car started");
+  }
+}
+
+var car = new Car();
+car.start();
+
+Generics
+--------
+class Box<T> {
+  constructor(public value: T) {}
+}
+
+const stringBox = new Box<string>("Hello");
+const numberBox = new Box<number>(123);
+
+Example: Direct initialization 
+--------------------------------
+class Person {
+  constructor(
+    public name: string,
+    public age: number
+  ) {}
+}
+
+
+var person = new Person("mike",20);
+console.log(person.name);
+console.log(person.age);
+
+
+
+
+
+
+
+
+
+
+
+
 
 ********************************************
 MORE TYPESCRIPT NOTES WILL BE ADDED SOON
@@ -3740,11 +4458,479 @@ export class UserComponent {
 Rest all remains the same
 
 
+#####################
+LAB TASK 19
+#####################
+
+Layout Update:
+
+Step 1: Update app.css with the additional css 
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+}
+
+h1, h2, h3 {
+  margin: 0;
+}
+
+.content {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  align-items: flex-start;
+}
+
+.tasks {
+  flex: 1;
+  background: white;
+  min-height: 400px;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+Step 2: Update. app.html
+<app-header></app-header>
+
+<main>
+  <div class="content">
+    <ul id="users">
+      <ul>
+        <app-user [id]="users[0].id" [avatar]="users[0].avatar" [name]="users[0].name"
+          (select)="onSelectUser($event)" />
+      </ul>
+      <ul>
+        <app-user [id]="users[1].id" [avatar]="users[1].avatar" [name]="users[1].name"
+          (select)="onSelectUser($event)" />
+      </ul>
+      <ul>
+        <app-user [id]="users[2].id" [avatar]="users[2].avatar" [name]="users[2].name"
+          (select)="onSelectUser($event)" />
+      </ul>
+    </ul>
+
+    <div class="tasks">
+      <h2>Task Here</h2>
+    </div>
+
+  </div>
+
+</main>
+
+#####################
+LAB TASK 20
+#####################
+
+replace <h2>Task Here</h2> -----> with username dynamically
+------------------------------------------------------------
+Note: @Input() allows a parent component to pass data to a child component.
+
+create Tasks Component----> Tasks.ts (add @Input() to receive input) ---->Input data of Tasks.ts display on Tasks.html-->app.html(add  <app-tasks/>-----> app.ts (find username based on UserId) --> app.html
+
+
+Step1: create tasks component
+ng g c tasks
+
+Step 2: use @Input() in tasks.ts to recieve input from app.ts
+
+import { Component, Input } from '@angular/core';
+import { required } from '@angular/forms/signals';
+
+@Component({
+  selector: 'app-tasks',
+  imports: [],
+  templateUrl: './tasks.html',
+  styleUrl: './tasks.css',
+})
+export class TasksComponent {
+  @Input({required:true}) name!:string;
+}
+
+Step 3: tasks.html
+<p>{{name}}</p>
+
+step 4: app.ts ( will supply data to app.html ----> @Input in tasks.ts ---> tasks.html---->finally <app-tasks> display data)
+
+import { Component, signal } from '@angular/core';
+import { HeaderComponent } from './header/header';
+import { UserComponent } from './user/user';
+import { DUMMY_USERS } from './dummy-users';
+import { TasksComponent } from "./tasks/tasks";
+
+
+@Component({
+  selector: 'app-root',
+  imports: [HeaderComponent, UserComponent, TasksComponent],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App {
+  protected readonly title = signal('first-angular-app');
+  users = DUMMY_USERS;
+  selectedUserId:string='u1';
+
+  get selectedUser(){
+    return this.users.find((users) => users.id === this.selectedUserId)!;
+  }
+
+  onSelectUser(id:string){
+    this.selectedUserId=id;
+  }
+}
+
+Step 5: update app.html
+-----------------------
+<app-header></app-header>
+
+<main>
+  <div class="content">
+    <ul id="users">
+      <ul>
+        <app-user [id]="users[0].id" [avatar]="users[0].avatar" [name]="users[0].name"
+          (select)="onSelectUser($event)" />
+      </ul>
+      <ul>
+        <app-user [id]="users[1].id" [avatar]="users[1].avatar" [name]="users[1].name"
+          (select)="onSelectUser($event)" />
+      </ul>
+      <ul>
+        <app-user [id]="users[2].id" [avatar]="users[2].avatar" [name]="users[2].name"
+          (select)="onSelectUser($event)" />
+      </ul>
+    </ul>
+
+    <div class="tasks">
+      <h2><app-tasks [name]="selectedUser.name"/></h2>
+    </div>
+
+  </div>
+
+</main>
+
+
+#####################
+LAB TASK 21
+#####################
+
+Working with undefined values (Using optional(?) instead of Trust Me Operator(!)
+
+Sometimes your code might return data or undefined value
+
+Step 1: Update task.ts 
+import { Component, Input } from '@angular/core';
+import { required } from '@angular/forms/signals';
+
+@Component({
+  selector: 'app-tasks',
+  imports: [],
+  templateUrl: './tasks.html',
+  styleUrl: './tasks.css',
+})
+export class TasksComponent {
+  @Input() name?:string;  // @Input() name: string | undefined;
+}
+
+Step 2: update app.html
+<app-header></app-header>
+
+<main>
+  <div class="content">
+    <ul id="users">
+      <ul>
+        <app-user [id]="users[0].id" [avatar]="users[0].avatar" [name]="users[0].name"
+          (select)="onSelectUser($event)" />
+      </ul>
+      <ul>
+        <app-user [id]="users[1].id" [avatar]="users[1].avatar" [name]="users[1].name"
+          (select)="onSelectUser($event)" />
+      </ul>
+      <ul>
+        <app-user [id]="users[2].id" [avatar]="users[2].avatar" [name]="users[2].name"
+          (select)="onSelectUser($event)" />
+      </ul>
+    </ul>
+
+    <div class="tasks">
+      <h2><app-tasks [name]="selectedUser?.name"/></h2>
+    </div>
+
+  </div>
+
+</main>
+
+
+Step 3: app.ts
+--------------
+import { Component, signal } from '@angular/core';
+import { HeaderComponent } from './header/header';
+import { UserComponent } from './user/user';
+import { DUMMY_USERS } from './dummy-users';
+import { TasksComponent } from "./tasks/tasks";
+
+
+@Component({
+  selector: 'app-root',
+  imports: [HeaderComponent, UserComponent, TasksComponent],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App {
+  protected readonly title = signal('first-angular-app');
+  users = DUMMY_USERS;
+  selectedUserId:string='u1';
+
+  get selectedUser(){
+    return this.users.find((users) => users.id === this.selectedUserId);
+  }
+
+  onSelectUser(id:string){
+    this.selectedUserId=id;
+  }
+}
+
+
+#####################
+LAB TASK 22
+#####################
+
+Using Object instead of Multiple variables in typescript
+
+Step 1: Update UserComponent and make code less lengthy
+-------------------------------------------------------
+import { Component, computed, EventEmitter, input, Input, output, Output} from '@angular/core';
+import { required } from '@angular/forms/signals';
+
+@Component({
+  selector: 'app-user',
+  imports: [],
+  templateUrl: './user.html',
+  styleUrl: './user.css',
+})
+export class UserComponent {
+  
+  // @Input({required:true}) id!:string;
+  // @Input({required:true}) avatar!:string;
+  // @Input({required:true}) name!:string;
+
+  @Input({required:true}) user!:{
+    id:string,
+    avatar:string,
+    name:string
+  }
+  //@Output() select = new EventEmitter();
+
+  select = output<string>();
+
+  // avatar=input.required<string>();
+  // name=input.required<string>();
+
+  // imagePath = computed(()=>{
+  //   return 'users/'+ this.avatar;
+  // });
+
+  onSelectedUser() {
+    this.select.emit(this.user.id);
+  }
+
+  
+
+  get imagePath() {
+    return 'users/'+ this.user.avatar;
+  }
+
+}
+
+
+Step 2: Update user.html
+---------------------------
+<div>
+    <button (click)="onSelectedUser()">
+        <img [src]="imagePath" [alt]="user.name" />
+        <span>{{ user.name }}</span>
+    </button>
+</div>
+
+Step 3: update app.html
+-------------------------
+<app-header></app-header>
+
+<main>
+  <div class="content">
+    <ul id="users">
+      <ul>
+        <app-user [user]="users[0]"
+          (select)="onSelectUser($event)" />
+      </ul>
+      <ul>
+        <app-user [user]="users[1]"
+          (select)="onSelectUser($event)" />
+      </ul>
+      <ul>
+        <app-user [user]="users[2]"
+          (select)="onSelectUser($event)" />
+      </ul>
+    </ul>
+
+    <div class="tasks">
+      <h2><app-tasks [name]="selectedUser?.name"/></h2>
+    </div>
+
+  </div>
+
+</main>
+
+#####################
+LAB TASK 23
+#####################
+
+using type for USER in user component
+-------------------------------------
+
+Step 1: Update user.ts
+------------------------
+import { Component, computed, EventEmitter, input, Input, output, Output } from '@angular/core';
+import { required } from '@angular/forms/signals';
+
+type User = {
+  id: string,
+  avatar: string,
+  name: string
+}
+
+@Component({
+  selector: 'app-user',
+  imports: [],
+  templateUrl: './user.html',
+  styleUrl: './user.css',
+})
+export class UserComponent {
+
+  // @Input({required:true}) id!:string;
+  // @Input({required:true}) avatar!:string;
+  // @Input({required:true}) name!:string;
+
+  @Input({ required: true }) user!: User;
+  //@Output() select = new EventEmitter();
+
+  select = output<string>();
+
+  // avatar=input.required<string>();
+  // name=input.required<string>();
+
+  // imagePath = computed(()=>{
+  //   return 'users/'+ this.avatar;
+  // });
+
+  onSelectedUser() {
+    this.select.emit(this.user.id);
+  }
 
 
 
+  get imagePath() {
+    return 'users/' + this.user.avatar;
+  }
+
+}
+
+#####################
+LAB TASK 24
+#####################
+
+Using interface instead of type
+--------------------------------
+
+Step 1: Update user.ts
+-----------------------
+import { Component, computed, EventEmitter, input, Input, output, Output } from '@angular/core';
+import { required } from '@angular/forms/signals';
+
+// type User = {
+//   id: string,
+//   avatar: string,
+//   name: string
+// }
+
+interface User {
+  id: string,
+  avatar: string,
+  name: string
+}
+
+@Component({
+  selector: 'app-user',
+  imports: [],
+  templateUrl: './user.html',
+  styleUrl: './user.css',
+})
+export class UserComponent {
+
+  // @Input({required:true}) id!:string;
+  // @Input({required:true}) avatar!:string;
+  // @Input({required:true}) name!:string;
+
+  @Input({ required: true }) user!: User;
+  //@Output() select = new EventEmitter();
+
+  select = output<string>();
+
+  // avatar=input.required<string>();
+  // name=input.required<string>();
+
+  // imagePath = computed(()=>{
+  //   return 'users/'+ this.avatar;
+  // });
+
+  onSelectedUser() {
+    this.select.emit(this.user.id);
+  }
 
 
+
+  get imagePath() {
+    return 'users/' + this.user.avatar;
+  }
+
+}
+
+Note: when you expect inheritance use interface if that is not your requirement then use type. For Object structure interface is best use case. 
+
+#####################
+LAB TASK 25
+#####################
+
+Dynamic List Content: @for()
+-----------------------
+
+Step 1: update app.html
+--------------------------
+<app-header></app-header>
+
+<main>
+  <div class="content">
+
+    <ul id="users">
+      @for (user of users; track user.id){
+          <ul>
+            <app-user [user]="user"
+              (select)="onSelectUser($event)" />
+        </ul>
+      }
+      
+     
+    </ul>
+
+    <div class="tasks">
+      <h2><app-tasks [name]="selectedUser?.name"/></h2>
+    </div>
+
+  </div>
+
+</main>
+
+Note:  track user.id --> Should be unique identifier which will help you fetch record
 
 
 
