@@ -2793,7 +2793,7 @@ const user = users.find(
 console.log(user);
 
 
-Difference between let versus var
+Difference between let versus block
 -----------------------------------
 let is blocked scoped:
 
@@ -3353,14 +3353,74 @@ console.log(person.name);
 console.log(person.age);
 
 
+#####################
+Decorators 
+######################
+
+Decorators in TypeScript are a feature that lets you modify the behavior of classes, methods, properties, or parameters
+
+Their are 4 types of decorators
+
+1. class decorator
+2. property decorator
+3. method decorator
+4. parameter decorator
 
 
+Error Handling
+-------------
 
+1. try...catch...finally
 
+This is the most common way to handle runtime errors.
 
+Example:
+--------
+function divide(a: number, b: number): number {
+  if (b === 0) {
+    throw new Error("Cannot divide by zero");
+  }
 
+  return a / b;
+}
 
+try {
+  const result = divide(10, 0);
+  console.log(result);
+} catch (error) {
+  console.log("Error:", (error as Error).message);
+} finally {
+  console.log("Execution completed");
+}
 
+2. Throwing Custom Errors
+
+You can create your own error class.
+
+Example:
+--------
+class AgeError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "AgeError";
+  }
+}
+
+function register(age: number) {
+  if (age < 18) {
+    throw new AgeError("Age must be at least 18");
+  }
+
+  console.log("Registration successful");
+}
+
+try {
+  register(16);
+} catch (error) {
+  if (error instanceof AgeError) {
+    console.log(error.message);
+  }
+}
 
 
 
@@ -4901,7 +4961,7 @@ Note: when you expect inheritance use interface if that is not your requirement 
 LAB TASK 25
 #####################
 
-Dynamic List Content: @for()
+Dynamic List Content: @for() - was added in ng version 17
 -----------------------
 
 Step 1: update app.html
@@ -4931,6 +4991,1091 @@ Step 1: update app.html
 </main>
 
 Note:  track user.id --> Should be unique identifier which will help you fetch record
+
+
+#####################
+LAB TASK 26 --@if , @else() - was added in ng version 17
+#####################
+
+Output Conditional statement
+-------------------------------
+
+Step 1: update app.ts
+----------------------
+import { Component, signal } from '@angular/core';
+import { HeaderComponent } from './header/header';
+import { UserComponent } from './user/user';
+import { DUMMY_USERS } from './dummy-users';
+import { TasksComponent } from "./tasks/tasks";
+
+
+@Component({
+  selector: 'app-root',
+  imports: [HeaderComponent, UserComponent, TasksComponent],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App {
+  protected readonly title = signal('first-angular-app');
+  users = DUMMY_USERS;
+  selectedUserId?:string;
+
+  get selectedUser(){
+    return this.users.find((users) => users.id === this.selectedUserId);
+  }
+
+  onSelectUser(id:string){
+    this.selectedUserId=id;
+  }
+}
+
+Step 2: Update app.html
+-------------------------
+<app-header></app-header>
+
+<main>
+  <div class="content">
+
+    <ul id="users">
+      @for (user of users; track user.id){
+          <ul>
+            <app-user [user]="user"
+              (select)="onSelectUser($event)" />
+        </ul>
+      }
+      
+     
+    </ul>
+
+    <div class="tasks">
+      @if(selectedUser){
+        <h2><app-tasks [name]="selectedUser.name"/></h2>
+      }@else {
+        <p>Select the user to get details!!</p>
+      }
+      
+    </div>
+
+  </div>
+
+</main>
+
+
+#####################
+LAB TASK 27 - workgin with old versions
+#####################
+
+Legacy approach ngFor and ngIf
+-------------------------------
+Note: to use *ngFor add that to app.ts  as shown in step 1
+
+step 1:*ngFor add that to app.ts
+import { Component, signal } from '@angular/core';
+import { HeaderComponent } from './header/header';
+import { UserComponent } from './user/user';
+import { DUMMY_USERS } from './dummy-users';
+import { TasksComponent } from "./tasks/tasks";
+import { NgFor } from '@angular/common';
+
+
+@Component({
+  selector: 'app-root',
+  imports: [HeaderComponent, UserComponent, TasksComponent, NgFor],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App {
+  protected readonly title = signal('first-angular-app');
+  users = DUMMY_USERS;
+  selectedUserId?:string;
+
+  get selectedUser(){
+    return this.users.find((users) => users.id === this.selectedUserId);
+  }
+
+  onSelectUser(id:string){
+    this.selectedUserId=id;
+  }
+}
+
+Step 2: update app.html
+<app-header></app-header>
+
+<main>
+  <div class="content">
+
+    <ul id="users" >
+      <!-- @for (user of users; track user.id){ -->
+        <ul *ngFor="let user of users">
+            <app-user [user]="user"
+              (select)="onSelectUser($event)" />
+        </ul>
+      <!-- } -->
+      
+     
+    </ul>
+
+    <div class="tasks">
+      @if(selectedUser){
+        <h2><app-tasks [name]="selectedUser.name"/></h2>
+      }@else {
+        <p>Select the user to get details!!</p>
+      }
+      
+    </div>
+
+  </div>
+
+</main>
+
+
+
+#####################
+LAB TASK 28 - workgin with old versions
+#####################
+
+using *ngIf
+
+Step 1: add NgIf to app.ts
+----------------------------
+import { Component, signal } from '@angular/core';
+import { HeaderComponent } from './header/header';
+import { UserComponent } from './user/user';
+import { DUMMY_USERS } from './dummy-users';
+import { TasksComponent } from "./tasks/tasks";
+import { NgFor, NgIf } from '@angular/common';
+
+
+@Component({
+  selector: 'app-root',
+  imports: [HeaderComponent, UserComponent, TasksComponent, NgFor, NgIf],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App {
+  protected readonly title = signal('first-angular-app');
+  users = DUMMY_USERS;
+  selectedUserId?:string;
+
+  get selectedUser(){
+    return this.users.find((users) => users.id === this.selectedUserId);
+  }
+
+  onSelectUser(id:string){
+    this.selectedUserId=id;
+  }
+}
+
+Step 2: Update app.html
+-----------------------
+<app-header></app-header>
+
+<main>
+  <div class="content">
+
+    <ul id="users" >
+      <!-- @for (user of users; track user.id){ -->
+        <ul *ngFor="let user of users">
+            <app-user [user]="user"
+              (select)="onSelectUser($event)" />
+        </ul>
+      <!-- } -->
+      
+     
+    </ul>
+
+    <div class="tasks">
+      <!-- @if(selectedUser){ -->
+        <h2><app-tasks *ngIf="selectedUser; else fallBack" [name]="selectedUser!.name"/></h2>
+      <!-- }@else { -->
+       <ng-template #fallBack>
+          <p>Select the user to get details!!</p>
+       </ng-template>
+        
+      <!-- } -->
+      
+    </div>
+
+  </div>
+
+</main>
+
+
+#####################
+LAB TASK 29 - Adding features to tasks component
+#####################
+
+Step 1: tasks.html
+
+<div class="tasks">
+    <header>
+        {{name}}'s tasks
+        <button>Add Task</button>
+    </header>
+</div>
+
+step 2: add css style to tasks.css
+button{
+  width: 15%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 15px;
+  border: none;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 6px;
+  background-color: #4309f0;
+}
+
+#####################
+LAB TASK 30 - Adding new component inside tasks
+#####################
+
+Step 1: Add new component inside 
+
+ng g c tasks/task
+
+Step 2: Add selector to Tasks.html
+<div class="tasks">
+    <header>
+        {{name}}'s tasks
+        <button>Add Task</button>
+    </header>
+</div>
+
+<ul>
+   <li>
+        <app-task></app-task>
+   </li>
+   <li>
+        <app-task></app-task>
+   </li>
+   <li>
+        <app-task></app-task>
+   </li>
+
+</ul>
+
+
+Step 3: add following html to task.html
+-----------------------------------
+<article>
+    <h2>Task Title</h2>
+    <time>Time</time>
+    <p>Summary</p>
+    <P class="actions">
+        <button>Complete</button>
+    </P>
+</article>
+
+
+
+Step 4: add to Tasks.ts -- TaskComponent
+<div class="tasks">
+    <header>
+        {{name}}'s tasks
+        <button>Add Task</button>
+    </header>
+</div>
+
+<app-task></app-task>
+
+#####################
+LAB TASK 31 - Adding new features to Task Component Continuation
+#####################
+
+Step 1: Add tasks Array
+----------------------
+import { Component, Input } from '@angular/core';
+import { required } from '@angular/forms/signals';
+import { TaskComponent } from './task/task';
+
+@Component({
+  selector: 'app-tasks',
+  imports: [TaskComponent],
+  templateUrl: './tasks.html',
+  styleUrl: './tasks.css',
+})
+export class TasksComponent {
+  @Input ({required:true}) userId!:string;
+  @Input({required:true}) name!:string;
+
+  tasks = [
+    {
+      id:'t1',
+      userId:'u1',
+      title:'Adding login feature',
+      summary:'login with otp, gmail and username',
+      dueDate: '2026-06-28'
+    },
+     {
+      id:'t2',
+      userId:'u2',
+      title:'Adding upload images',
+      summary:'Per product max 15 images to be uploaded',
+      dueDate: '2026-06-29'
+    },
+    {
+      id:'t3',
+      userId:'u1',
+      title:'Adding upload product description',
+      summary:'add product description',
+      dueDate: '2026-06-29'
+    }
+  ];
+
+  get selectedUserTasks(){
+    return this.tasks.filter((t)=> t.userId===this.userId);
+  }
+}
+
+Step 2: Supply UserId from app.html to tasks.ts
+----------------------------------------------------
+<app-header></app-header>
+
+<main>
+  <div class="content">
+
+    <ul id="users" >
+      @for (user of users; track user.id){
+        <ul >
+            <app-user [user]="user"
+              (select)="onSelectUser($event)" />
+        </ul>
+      }
+      
+     
+    </ul>
+
+    <div class="tasks">
+      @if(selectedUser){
+        <h2><app-tasks [userId]="selectedUser!.id" [name]="selectedUser!.name"/></h2>
+      }@else {
+      
+          <p>Select the user to get details!!</p>
+    
+        
+      }
+      
+    </div>
+
+  </div>
+
+</main>
+
+Step 3: @for add that to tasks.html
+-------------------------------
+<div class="tasks">
+    <header>
+        {{name}}'s tasks
+        <button>Add Task</button>
+    </header>
+</div>
+
+<ul>
+@for(task of selectedUserTasks; track task.id){
+
+   <li>
+        <app-task></app-task>
+   </li>
+}
+</ul>
+
+#####################
+LAB TASK 32 - Adding new features to Task Component Continuation
+#####################
+
+Step 1: update task.ts
+-----------------------
+import { Component, Input } from '@angular/core';
+
+interface Task{
+  id:string,
+  userId:string,
+  title:string,
+  summary:string,
+  dueDate:string
+}
+
+@Component({
+  selector: 'app-task',
+  imports: [],
+  templateUrl: './task.html',
+  styleUrl: './task.css',
+})
+export class TaskComponent {
+
+  @Input({required:true}) task!:Task;
+  
+}
+
+
+Step 2: update tasks.html
+----------------------------
+
+
+<div class="tasks">
+    <header>
+        {{name}}'s tasks
+        <button>Add Task</button>
+    </header>
+</div>
+
+<ul>
+@for(task of selectedUserTasks; track task.id){
+
+   <li>
+        <app-task [task]="task"></app-task>
+   </li>
+}
+</ul>
+
+Step 3: update task.html
+--------------------------
+<article>
+    <h2>{{task.title}}</h2>
+    <time>{{task.dueDate}}</time>
+    <p>{{task.summary}}</p>
+    <P class="actions">
+        <button>Complete</button>
+    </P>
+</article>
+
+#####################
+LAB TASK 33 - Creating Model Layer 
+#####################
+
+Step 1: create user.model.ts - keep yout dto here
+------------------------------
+export interface User {
+  id: string,
+  avatar: string,
+  name: string
+}
+
+Step 2: import user in user.ts
+-----------------------------
+import { Component, computed, EventEmitter, input, Input, output, Output } from '@angular/core';
+import { required } from '@angular/forms/signals';
+import {User} from './user.model';
+
+@Component({
+  selector: 'app-user',
+  imports: [],
+  templateUrl: './user.html',
+  styleUrl: './user.css',
+})
+export class UserComponent {
+
+  // @Input({required:true}) id!:string;
+  // @Input({required:true}) avatar!:string;
+  // @Input({required:true}) name!:string;
+
+  @Input({ required: true }) user!: User;
+  //@Output() select = new EventEmitter();
+
+  select = output<string>();
+
+  // avatar=input.required<string>();
+  // name=input.required<string>();
+
+  // imagePath = computed(()=>{
+  //   return 'users/'+ this.avatar;
+  // });
+
+  onSelectedUser() {
+    this.select.emit(this.user.id);
+  }
+
+
+
+  get imagePath() {
+    return 'users/' + this.user.avatar;
+  }
+
+}
+
+also, for Task do the same thing
+------------------------------
+
+Step 1: create task.model.ts
+--------------------------------
+export interface Task{
+  id:string,
+  userId:string,
+  title:string,
+  summary:string,
+  dueDate:string
+}
+
+Step 2: Import in task.ts
+-------------------------
+import { Component, Input } from '@angular/core';
+import { Task } from './task.model';
+
+
+
+@Component({
+  selector: 'app-task',
+  imports: [],
+  templateUrl: './task.html',
+  styleUrl: './task.css',
+})
+export class TaskComponent {
+
+  @Input({required:true}) task!:Task;
+  
+}
+
+#####################
+LAB TASK 34 - Implement Complete Button feature
+#####################
+
+@Output() is an Angular property decorator used to send data or notify events from a child component to its parent component.
+
+Step 1: Update complete button feature in task.html
+
+Note:
+AppComponent (Parent)
+        │
+        ▼
+UserComponent (Child)
+
+The parent passes data to the child using @Input().
+
+The child sends data back to the parent using @Output().
+
+Here task.html (click())---> task.ts (@Output (to supply data to parent) ---> tasks.html ($event captures data)--->tasks.ts(onCompleteTasks())
+
+Step 1: Update task.html
+-------------------------
+<article>
+    <h2>{{task.title}}</h2>
+    <time>{{task.dueDate}}</time>
+    <p>{{task.summary}}</p>
+    <P class="actions">
+        <button (click)="onCompleteTask()">Complete</button>
+    </P>
+</article>
+
+
+Step 2: Update task.html
+-------------------------
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Task } from './task.model';
+
+
+
+@Component({
+  selector: 'app-task',
+  imports: [],
+  templateUrl: './task.html',
+  styleUrl: './task.css',
+})
+export class TaskComponent {
+
+  @Input({required:true}) task!:Task;
+  @Output() complete = new EventEmitter<string>();
+
+  onCompleteTask(){
+    this.complete.emit(this.task.id);
+  }
+  
+}
+
+Step 3: tasks.html (parent)
+
+<div class="tasks">
+    <header>
+        {{name}}'s tasks
+        <button>Add Task</button>
+    </header>
+</div>
+
+<ul>
+@for(task of selectedUserTasks; track task.id){
+
+   <li>
+        <app-task [task]="task" (complete)="onCompleteTask($event)"></app-task>
+   </li>
+}
+</ul>
+
+Step 4: Remove task here in function onCompleteTask
+
+import { Component, Input } from '@angular/core';
+import { required } from '@angular/forms/signals';
+import { TaskComponent } from './task/task';
+
+@Component({
+  selector: 'app-tasks',
+  imports: [TaskComponent],
+  templateUrl: './tasks.html',
+  styleUrl: './tasks.css',
+})
+export class TasksComponent {
+  @Input ({required:true}) userId!:string;
+  @Input({required:true}) name!:string;
+
+  tasks = [
+    {
+      id:'t1',
+      userId:'u1',
+      title:'Adding login feature',
+      summary:'login with otp, gmail and username',
+      dueDate: '2026-06-28'
+    },
+     {
+      id:'t2',
+      userId:'u2',
+      title:'Adding upload images',
+      summary:'Per product max 15 images to be uploaded',
+      dueDate: '2026-06-29'
+    },
+    {
+      id:'t3',
+      userId:'u1',
+      title:'Adding upload product description',
+      summary:'add product description',
+      dueDate: '2026-06-29'
+    }
+  ];
+
+  get selectedUserTasks(){
+    return this.tasks.filter((t)=> t.userId===this.userId);
+  }
+
+  onCompleteTask(id:string){
+      this.tasks = this.tasks.filter((task)=> task.id!== id);
+  }
+}
+
+
+#####################
+LAB TASK 35 - Implement Add Task Feature
+#####################
+
+Step 1: Create new Component
+
+ng g c tasks/new-task
+
+Note: Child Component of tasks
+
+Step 2: Update tasks.ts - add boolean variable addNewTask()
+------------------------
+
+
+import { Component, Input } from '@angular/core';
+import { required } from '@angular/forms/signals';
+import { TaskComponent } from './task/task';
+import { NewTask } from './new-task/new-task';
+
+@Component({
+  selector: 'app-tasks',
+  imports: [TaskComponent,NewTask],
+  templateUrl: './tasks.html',
+  styleUrl: './tasks.css',
+})
+export class TasksComponent {
+
+  @Input ({required:true}) userId!:string;
+  @Input({required:true}) name!:string;
+  isAddingTask:boolean = false;
+  tasks = [
+    {
+      id:'t1',
+      userId:'u1',
+      title:'Adding login feature',
+      summary:'login with otp, gmail and username',
+      dueDate: '2026-06-28'
+    },
+     {
+      id:'t2',
+      userId:'u2',
+      title:'Adding upload images',
+      summary:'Per product max 15 images to be uploaded',
+      dueDate: '2026-06-29'
+    },
+    {
+      id:'t3',
+      userId:'u1',
+      title:'Adding upload product description',
+      summary:'add product description',
+      dueDate: '2026-06-29'
+    }
+  ];
+
+  get selectedUserTasks(){
+    return this.tasks.filter((t)=> t.userId===this.userId);
+  }
+
+  onCompleteTask(id:string){
+      this.tasks = this.tasks.filter((task)=> task.id!== id);
+  }
+
+  addNewTask() {
+    this.isAddingTask=true;
+  }
+}
+
+Step 3: update tasks.html - @if
+---------------------------------
+
+@if(isAddingTask){
+    <app-new-task />
+}
+
+<div class="tasks">
+    <header>
+        {{name}}'s tasks
+        <button (click)="addNewTask()">Add Task</button>
+    </header>
+</div>
+
+<ul>
+@for(task of selectedUserTasks; track task.id){
+
+   <li>
+        <app-task [task]="task" (complete)="onCompleteTask($event)"></app-task>
+   </li>
+}
+</ul>
+
+
+#####################
+LAB TASK 36 - Adding new Task Dialog Form
+#####################
+
+Step : Add the following code to new-task.html
+
+<div class="backdrop"></div>
+<dialog open>
+  <h2>Add Task</h2>
+  <form>
+    <p>
+      <label for="title">Title</label>
+      <input type="text" id="title" name="title" />
+    </p>
+
+    <p>
+      <label for="summary">Summary</label>
+      <textarea id="summary" rows="5" name="summary"></textarea>
+    </p>
+
+    <p>
+      <label for="due-date">Due Date</label>
+      <input type="date" id="due-date" name="due-date" />
+    </p>
+
+    <p class="actions">
+      <button type="button">Cancel</button>
+      <button type="submit">Create</button>
+    </p>
+  </form>
+</dialog>
+
+Step 2: Add css to new-task.css
+.backdrop {
+  background-color: rgba(0, 0, 0, 0.9);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+}
+
+dialog {
+  width: 90%;
+  max-width: 30rem;
+  background-color: #433352;
+  border-radius: 6px;
+  border: none;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  padding: 1rem;
+  top: 5rem;
+}
+
+h2 {
+  margin: 0;
+  color: #d0c2e1;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  font-size: 0.85rem;
+  color: #ab9ac0;
+}
+
+input,
+textarea {
+  width: 100%;
+  font: inherit;
+  padding: 0.15rem 0.25rem;
+  border-radius: 4px;
+  border: 1px solid #ab9ac0;
+  background-color: #d0c2e1;
+}
+
+.actions {
+  margin: 1rem 0 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.25rem;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  padding: 0.35rem 1.25rem;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+button[type="button"] {
+  color: #bdadcf;
+}
+
+button[type="button"]:hover,
+button[type="button"]:active {
+  color: #d0c2e1;
+}
+
+button[type="submit"] {
+  background-color: #9c73ca;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+button[type="submit"]:hover,
+button[type="submit"]:active {
+  background-color: #895cce;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
+}
+
+@media (min-width: 768px) {
+  dialog {
+    padding: 2rem;
+  }
+}
+
+
+
+#####################
+LAB TASK 36 - Adding new Task Dialog Form continuation - cancel feature
+#####################
+
+NewTask (cancel Button)--> @Output(NewTask.ts) --> Tasks.html-->Tasks.ts-->set to false
+
+Step 1: Update NewTask.html
+----------------------------
+<div class="backdrop" (click)="cancelTasks()"></div>
+<dialog open>
+  <h2>Add Task</h2>
+  <form>
+    <p>
+      <label for="title">Title</label>
+      <input type="text" id="title" name="title" />
+    </p>
+
+    <p>
+      <label for="summary">Summary</label>
+      <textarea id="summary" rows="5" name="summary"></textarea>
+    </p>
+
+    <p>
+      <label for="due-date">Due Date</label>
+      <input type="date" id="due-date" name="due-date" />
+    </p>
+
+    <p class="actions">
+      <button (click)="cancelTasks()" type="button">Cancel</button>
+      <button  type="submit">Create</button>
+    </p>
+  </form>
+</dialog>
+
+Step 2: Update NewTask.ts - @Output
+------------------------
+
+import { Component, EventEmitter, Output } from '@angular/core';
+
+@Component({
+  selector: 'app-new-task',
+  imports: [],
+  templateUrl: './new-task.html',
+  styleUrl: './new-task.css',
+})
+export class NewTask {
+
+  @Output() cancelTask = new EventEmitter<void>();
+
+  cancelTasks(){
+    this.cancelTask.emit();
+  }
+
+}
+
+Step 3: Update Tasks.html
+----------------------------
+@if(isAddingTask){
+    <app-new-task (cancelTask)="cancelNewTask()"/>
+}
+
+<div class="tasks">
+    <header>
+        {{name}}'s tasks
+        <button (click)="addNewTask()">Add Task</button>
+    </header>
+</div>
+
+<ul>
+@for(task of selectedUserTasks; track task.id){
+
+   <li>
+        <app-task [task]="task" (complete)="onCompleteTask($event)"></app-task>
+   </li>
+}
+</ul>
+
+
+Step 4: Update Tasks.ts
+----------------------
+import { Component, Input } from '@angular/core';
+import { required } from '@angular/forms/signals';
+import { TaskComponent } from './task/task';
+import { NewTask } from './new-task/new-task';
+
+@Component({
+  selector: 'app-tasks',
+  imports: [TaskComponent,NewTask],
+  templateUrl: './tasks.html',
+  styleUrl: './tasks.css',
+})
+export class TasksComponent {
+
+  @Input ({required:true}) userId!:string;
+  @Input({required:true}) name!:string;
+  isAddingTask:boolean = false;
+  tasks = [
+    {
+      id:'t1',
+      userId:'u1',
+      title:'Adding login feature',
+      summary:'login with otp, gmail and username',
+      dueDate: '2026-06-28'
+    },
+     {
+      id:'t2',
+      userId:'u2',
+      title:'Adding upload images',
+      summary:'Per product max 15 images to be uploaded',
+      dueDate: '2026-06-29'
+    },
+    {
+      id:'t3',
+      userId:'u1',
+      title:'Adding upload product description',
+      summary:'add product description',
+      dueDate: '2026-06-29'
+    }
+  ];
+
+  get selectedUserTasks(){
+    return this.tasks.filter((t)=> t.userId===this.userId);
+  }
+
+  onCompleteTask(id:string){
+      this.tasks = this.tasks.filter((task)=> task.id!== id);
+  }
+
+  addNewTask() {
+    this.isAddingTask=true;
+  }
+  cancelNewTask() {
+    this.isAddingTask=false;
+  }
+}
+
+#####################
+LAB TASK 37 - Adding new Task Dialog Form continuation - create feature
+#####################
+
+Property & event Binding
+--------------------------
+What is ngModel in Angular?
+
+ngModel is an Angular directive used for two-way data binding between a component property and an HTML form control (such as an <input>, <select>, or <textarea>).
+
+It is part of Angular's FormsModule.
+
+Syntax: [(ngNodel)]
+
+
+Step 1: update new-task.html
+-----------------------------
+<div class="backdrop" (click)="cancelTasks()"></div>
+<dialog open>
+  <h2>Add Task</h2>
+  <form>
+    <p>
+      <label for="title">Title</label>
+      <input type="text" id="title" name="title" [(ngModel)]="enteredTitle"/>
+    </p>
+
+    <p>
+      <label for="title">Title2</label>
+      <input type="text" id="title" name="title" [(ngModel)]="enteredTitle"/>
+    </p>
+
+    <p>
+      <label for="summary">Summary</label>
+      <textarea id="summary" rows="5" name="summary"></textarea>
+    </p>
+
+    <p>
+      <label for="due-date">Due Date</label>
+      <input type="date" id="due-date" name="due-date" />
+    </p>
+
+    <p class="actions">
+      <button (click)="cancelTasks()" type="button">Cancel</button>
+      <button  type="submit">Create</button>
+    </p>
+  </form>
+</dialog>
+
+Step 2: Update new-tasks.ts
+----------------------------
+import { Component, EventEmitter, Output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+@Component({
+  selector: 'app-new-task',
+  imports: [FormsModule],
+  templateUrl: './new-task.html',
+  styleUrl: './new-task.css',
+})
+export class NewTask {
+
+  @Output() cancelTask = new EventEmitter<void>();
+
+  enteredTitle:string='';
+
+  cancelTasks(){
+    this.cancelTask.emit();
+  }
+
+}
+
+
+
+
 
 
 
