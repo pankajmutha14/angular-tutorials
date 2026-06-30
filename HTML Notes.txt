@@ -6074,9 +6074,628 @@ export class NewTask {
 }
 
 
+#####################
+LAB TASK 38- Adding new Task Dialog Form continuation - create feature
+#####################
+
+Step 1: update new-task.html
+---------------------------
+<div class="backdrop" (click)="cancelTasks()"></div>
+<dialog open>
+  <h2>Add Task</h2>
+  <form>
+    <p>
+      <label for="title">Title</label>
+      <input type="text" id="title" name="title" [(ngModel)]="enteredTitle"/>
+    </p>
+
+    <p>
+      <label for="summary">Summary</label>
+      <textarea id="summary" rows="5" name="summary" [(ngModel)]="enteredSummary"></textarea>
+    </p>
+
+    <p>
+      <label for="due-date">Due Date</label>
+      <input type="date" id="due-date" name="due-date" [(ngModel)]="enteredDueDate"/>
+    </p>
+
+    <p class="actions">
+      <button (click)="cancelTasks()" type="button">Cancel</button>
+      <button  type="submit">Create</button>
+    </p>
+  </form>
+</dialog>
+
+Step 2: Update new-task.ts
+----------------------------
+import { Component, EventEmitter, Output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+@Component({
+  selector: 'app-new-task',
+  imports: [FormsModule],
+  templateUrl: './new-task.html',
+  styleUrl: './new-task.css',
+})
+export class NewTask {
+
+  @Output() cancelTask = new EventEmitter<void>();
+
+  enteredTitle:string='';
+  enteredSummary:string='';
+  enteredDueDate:string='';
+
+  cancelTasks(){
+    this.cancelTask.emit();
+  }
+
+}
+
+ #####################
+LAB TASK 39- Adding new Task Dialog Form continuation - create feature - Using signals
+#####################
+
+Step 1: no change in new-task.html
+<div class="backdrop" (click)="cancelTasks()"></div>
+<dialog open>
+  <h2>Add Task</h2>
+  <form>
+    <p>
+      <label for="title">Title</label>
+      <input type="text" id="title" name="title" [(ngModel)]="enteredTitle"/>
+    </p>
+
+    <p>
+      <label for="summary">Summary</label>
+      <textarea id="summary" rows="5" name="summary" [(ngModel)]="enteredSummary"></textarea>
+    </p>
+
+    <p>
+      <label for="due-date">Due Date</label>
+      <input type="date" id="due-date" name="due-date" [(ngModel)]="enteredDueDate"/>
+    </p>
+
+    <p class="actions">
+      <button (click)="cancelTasks()" type="button">Cancel</button>
+      <button  type="submit">Create</button>
+    </p>
+  </form>
+</dialog>
+
+Step 2: Update new-task.ts with signals
+import { Component, EventEmitter, Output, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+@Component({
+  selector: 'app-new-task',
+  imports: [FormsModule],
+  templateUrl: './new-task.html',
+  styleUrl: './new-task.css',
+})
+export class NewTask {
+
+  @Output() cancelTask = new EventEmitter<void>();
+
+  enteredTitle = signal('');
+  enteredSummary= signal('');
+  enteredDueDate=signal('');
+
+  cancelTasks(){
+    this.cancelTask.emit();
+  }
+
+}
+
+#####################
+LAB TASK 40- Adding new Task Dialog Form continuation - create feature - Form Submittion
+#####################
+
+Step 1: Update new-task.html
+------------------------------
+<div class="backdrop" (click)="cancelTasks()"></div>
+<dialog open>
+  <h2>Add Task</h2>
+  <form (ngSubmit)="taskSubmit()">
+    <p>
+      <label for="title">Title</label>
+      <input type="text" id="title" name="title" [(ngModel)]="enteredTitle"/>
+    </p>
+
+    <p>
+      <label for="summary">Summary</label>
+      <textarea id="summary" rows="5" name="summary" [(ngModel)]="enteredSummary"></textarea>
+    </p>
+
+    <p>
+      <label for="due-date">Due Date</label>
+      <input type="date" id="due-date" name="due-date" [(ngModel)]="enteredDueDate"/>
+    </p>
+
+    <p class="actions">
+      <button (click)="cancelTasks()" type="button">Cancel</button>
+      <button  type="submit">Create</button>
+    </p>
+  </form>
+</dialog>
+
+Step 2: Update new-task.ts
+--------------------------
+import { Component, EventEmitter, Output, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+@Component({
+  selector: 'app-new-task',
+  imports: [FormsModule],
+  templateUrl: './new-task.html',
+  styleUrl: './new-task.css',
+})
+export class NewTask {
 
 
+  @Output() cancelTask = new EventEmitter<void>();
 
+  enteredTitle = '';
+  enteredSummary= '';
+  enteredDueDate='';
+
+  cancelTasks(){
+    this.cancelTask.emit();
+  }
+
+  taskSubmit() {
+      console.log(this.enteredTitle);
+      console.log(this.enteredSummary);
+      console.log(this.enteredDueDate);
+      
+      
+  }
+
+}
+
+#####################
+LAB TASK 40- Adding new Task Dialog Form continuation - create feature - Send data from new-task(child) to tasks.ts(parent) using @Output
+#####################
+
+Step 1: no change in new-task.html
+---------------------------
+<div class="backdrop" (click)="cancelTasks()"></div>
+<dialog open>
+  <h2>Add Task</h2>
+  <form (ngSubmit)="taskSubmit()">
+    <p>
+      <label for="title">Title</label>
+      <input type="text" id="title" name="title" [(ngModel)]="enteredTitle"/>
+    </p>
+
+    <p>
+      <label for="summary">Summary</label>
+      <textarea id="summary" rows="5" name="summary" [(ngModel)]="enteredSummary"></textarea>
+    </p>
+
+    <p>
+      <label for="due-date">Due Date</label>
+      <input type="date" id="due-date" name="due-date" [(ngModel)]="enteredDueDate"/>
+    </p>
+
+    <p class="actions">
+      <button (click)="cancelTasks()" type="button">Cancel</button>
+      <button  type="submit">Create</button>
+    </p>
+  </form>
+</dialog>
+
+Step 2: Update new-task.ts
+----------------------------
+import { Component, EventEmitter, Output, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+@Component({
+  selector: 'app-new-task',
+  imports: [FormsModule],
+  templateUrl: './new-task.html',
+  styleUrl: './new-task.css',
+})
+export class NewTask {
+
+
+  @Output() cancelTask = new EventEmitter<void>();
+
+  @Output() addTask = new EventEmitter<{
+    title:string;
+    summary:string;
+    date:string
+  }
+    >();
+
+  enteredTitle = '';
+  enteredSummary= '';
+  enteredDueDate='';
+
+  cancelTasks(){
+    this.cancelTask.emit();
+  }
+
+  taskSubmit() {
+      this.addTask.emit(
+        {
+          title:this.enteredTitle,
+          summary:this.enteredSummary,
+          date:this.enteredDueDate
+        }
+      );
+      
+      
+  }
+
+}
+
+Step 3: Create model taskdata.model.ts
+-------------------------------------
+interface Taskdata{
+
+    title:string;
+    summary:string;
+    date:string
+
+}
+
+Step 4: Update tasks.html 
+--------------------------
+@if(isAddingTask){
+    <app-new-task (cancelTask)="cancelNewTask()" (addTask)="createTask($event)"/>
+}
+
+<div class="tasks">
+    <header>
+        {{name}}'s tasks
+        <button (click)="addNewTask()">Add Task</button>
+    </header>
+</div>
+
+<ul>
+@for(task of selectedUserTasks; track task.id){
+
+   <li>
+        <app-task [task]="task" (complete)="onCompleteTask($event)"></app-task>
+   </li>
+}
+</ul>
+
+
+Step 5: add tasks to the array in tasks.ts
+-------------------------------------------
+
+import { Component, Input } from '@angular/core';
+import { TaskComponent } from './task/task';
+import { NewTask } from './new-task/new-task';
+
+@Component({
+  selector: 'app-tasks',
+  imports: [TaskComponent,NewTask],
+  templateUrl: './tasks.html',
+  styleUrl: './tasks.css',
+})
+export class TasksComponent {
+
+
+  @Input ({required:true}) userId!:string;
+  @Input({required:true}) name!:string;
+  isAddingTask:boolean = false;
+  tasks = [
+    {
+      id:'t1',
+      userId:'u1',
+      title:'Adding login feature',
+      summary:'login with otp, gmail and username',
+      dueDate: '2026-06-28'
+    },
+     {
+      id:'t2',
+      userId:'u2',
+      title:'Adding upload images',
+      summary:'Per product max 15 images to be uploaded',
+      dueDate: '2026-06-29'
+    },
+    {
+      id:'t3',
+      userId:'u1',
+      title:'Adding upload product description',
+      summary:'add product description',
+      dueDate: '2026-06-29'
+    }
+  ];
+
+  get selectedUserTasks(){
+    return this.tasks.filter((t)=> t.userId===this.userId);
+  }
+
+  onCompleteTask(id:string){
+      this.tasks = this.tasks.filter((task)=> task.id!== id);
+  }
+
+  addNewTask() {
+    this.isAddingTask=true;
+  }
+  cancelNewTask() {
+    this.isAddingTask=false;
+  }
+  createTask(data:Taskdata) {
+    this.tasks.push({
+      id:new Date().getMilliseconds().toString(),
+      userId:this.userId,
+      title:data.title,
+      summary:data.summary,
+      dueDate:data.date
+    });
+    this.isAddingTask=false
+  }
+}
+
+#####################
+LAB TASK 41- Transforming data with pipes
+#####################
+Step 1: task.html
+-----------------
+<article>
+    <h2>{{task.title}}</h2>
+    <time>{{task.dueDate | date:'fullDate'}}</time>
+    <p>{{task.summary}}</p>
+    <P class="actions">
+        <button (click)="onCompleteTask()">Complete</button>
+    </P>
+</article>
+
+Step 2: Import that in task.ts
+------------------------------
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Task } from './task.model';
+import { DatePipe } from '@angular/common';
+
+
+@Component({
+  selector: 'app-task',
+  imports: [DatePipe],
+  templateUrl: './task.html',
+  styleUrl: './task.css',
+})
+export class TaskComponent {
+
+  @Input({required:true}) task!:Task;
+  @Output() complete = new EventEmitter<string>();
+
+  onCompleteTask(){
+    this.complete.emit(this.task.id);
+  }
+  
+}
+
+#####################
+LAB TASK 42- Introduction to Service layer
+#####################
+
+
+Step 1: create tasks.service.ts
+-------------------------------
+class TasksService{
+  isAddingTask:boolean = false;
+  tasks = [
+    {
+      id:'t1',
+      userId:'u1',
+      title:'Adding login feature',
+      summary:'login with otp, gmail and username',
+      dueDate: '2026-06-28'
+    },
+     {
+      id:'t2',
+      userId:'u2',
+      title:'Adding upload images',
+      summary:'Per product max 15 images to be uploaded',
+      dueDate: '2026-06-29'
+    },
+    {
+      id:'t3',
+      userId:'u1',
+      title:'Adding upload product description',
+      summary:'add product description',
+      dueDate: '2026-06-29'
+    }
+  ];
+
+  selectedUserTasks(userId:string){
+    return this.tasks.filter((t)=> t.userId===userId);
+  }
+
+  onCompleteTask(id:string){
+      this.tasks = this.tasks.filter((task)=> task.id!== id);
+  }
+
+  addNewTask() {
+    this.isAddingTask=true;
+  }
+  cancelNewTask() {
+    this.isAddingTask=false;
+  }
+  createTask(data:Taskdata,userId:string) {
+    this.tasks.push({
+      id:new Date().getMilliseconds().toString(),
+      userId:userId,
+      title:data.title,
+      summary:data.summary,
+      dueDate:data.date
+    });
+    this.isAddingTask=false
+  }
+}
+
+Step 2: dependency Injection
+------------------------
+import { Component, Input } from '@angular/core';
+import { TaskComponent } from './task/task';
+import { NewTask } from './new-task/new-task';
+
+@Component({
+  selector: 'app-tasks',
+  imports: [TaskComponent,NewTask],
+  templateUrl: './tasks.html',
+  styleUrl: './tasks.css',
+})
+export class TasksComponent {
+  @Input ({required:true}) userId!:string;
+  @Input({required:true}) name!:string;
+
+ // private tasksService:TasksService;
+
+// private tasksService = inject(TasksService); //Alternative approach
+
+  constructor(private tasksService:TasksService){
+    this.tasksService=tasksService;
+  }
+
+
+ 
+  get selectedUserTasks(){
+    return this.tasksService.selectedUserTasks(this.userId);
+  }
+
+  onCompleteTask(id:string){
+      this.tasksService.onCompleteTask(id);
+  }
+
+  addNewTask() {
+    this.tasksService.addNewTask();
+  }
+  cancelNewTask() {
+    this.tasksService.cancelNewTask();
+  }
+  createTask(data:Taskdata) {
+    this.tasksService.createTask(data,this.userId);
+  }
+}
+
+
+#####################
+LAB TASK 43- Storing data in LocalStorage
+#####################
+
+Step 1: update tasks.ts
+---------------------------
+import { Component, inject, Input } from '@angular/core';
+import { TaskComponent } from './task/task';
+import { NewTask } from './new-task/new-task';
+import { TasksService } from './tasks.service';
+
+@Component({
+  selector: 'app-tasks',
+  imports: [TaskComponent,NewTask],
+  templateUrl: './tasks.html',
+  styleUrl: './tasks.css',
+})
+export class TasksComponent {
+  @Input ({required:true}) userId!:string;
+  @Input({required:true}) name!:string;
+  isAddingTask:boolean = false;
+ // private tasksService:TasksService;
+
+ private tasksService = inject(TasksService);
+
+  // constructor(private tasksService:TasksService){
+  //   this.tasksService=tasksService;
+  // }
+
+
+ 
+  get selectedUserTasks(){
+    return this.tasksService.selectedUserTasks(this.userId);
+  }
+
+  onCompleteTask(id:string){
+      this.tasksService.onCompleteTask(id);
+  }
+
+  addNewTask() {
+    this.isAddingTask=true;
+  }
+  cancelNewTask() {
+    this.isAddingTask=false;
+  }
+  createTask(data:Taskdata) {
+    this.tasksService.createTask(data,this.userId);
+  }
+}
+
+Step 2: Adding data to local storage
+-----------------------------------
+import { Injectable } from "@angular/core";
+
+@Injectable({
+    providedIn:'root'
+})
+export class TasksService{
+  isAddingTask:boolean = false;
+  tasks = [
+    {
+      id:'t1',
+      userId:'u1',
+      title:'Adding login feature',
+      summary:'login with otp, gmail and username',
+      dueDate: '2026-06-28'
+    },
+     {
+      id:'t2',
+      userId:'u2',
+      title:'Adding upload images',
+      summary:'Per product max 15 images to be uploaded',
+      dueDate: '2026-06-29'
+    },
+    {
+      id:'t3',
+      userId:'u1',
+      title:'Adding upload product description',
+      summary:'add product description',
+      dueDate: '2026-06-29'
+    }
+  ];
+
+  constructor(){
+        const storageTasks = localStorage.getItem('tasks');
+
+        if(storageTasks){
+            this.tasks=JSON.parse(storageTasks);
+        }
+  }
+
+  selectedUserTasks(userId:string){
+    return this.tasks.filter((t)=> t.userId===userId);
+  }
+
+  onCompleteTask(id:string){
+      this.tasks = this.tasks.filter((task)=> task.id!== id);
+      this.setTasks();
+  }
+
+//   addNewTask() {
+//     this.isAddingTask=true;
+//   }
+//   cancelNewTask() {
+//     this.isAddingTask=false;
+//   }
+  createTask(data:Taskdata,userId:string) {
+    this.tasks.push({
+      id:new Date().getMilliseconds().toString(),
+      userId:userId,
+      title:data.title,
+      summary:data.summary,
+      dueDate:data.date
+    });
+    this.isAddingTask=false
+    this.setTasks();
+  }
+
+  private setTasks(){
+    localStorage.setItem('tasks',JSON.stringify(this.tasks));
+  }
+}
 
 
 
