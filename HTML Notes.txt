@@ -4182,9 +4182,9 @@ step 2:update app.html
 LAB TASK 14 - Component Inputs from another component
 #####################
 
-app.ts(Make DUMMY_USERS available)----DUMMY_USERS--->app.html-->[avatar] gets image url this from app.ts--->user.ts--->user.html
-
 @Input() allows a parent component to pass data to a child component. The child component receives that data and stores it in a property.
+
+Parent component passes data to the child component using property binding on the child selector, and the child receives it using @Input() in the child TypeScript file, then uses it in the child HTML template.
 
 
 Step 1: update app.ts
@@ -6696,6 +6696,328 @@ export class TasksService{
     localStorage.setItem('tasks',JSON.stringify(this.tasks));
   }
 }
+
+##########################
+Angular Module - For Older Applications before Angular 14 version
+##########################
+
+We will migrate our standalone application to module based
+
+Step 1: create 'app.module.ts' inside app forlder
+
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { App } from './app';
+import { HeaderComponent } from './header/header';
+import { TasksComponent } from './tasks/tasks';
+import { TaskComponent } from './tasks/task/task';
+import { NewTask } from './tasks/new-task/new-task';
+import { DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { UserComponent } from './user/user';
+
+@NgModule({
+  declarations: [
+    App,
+     HeaderComponent, TasksComponent, TaskComponent, NewTask, UserComponent
+  ],
+  imports: [
+    BrowserModule
+  ],
+  bootstrap: [
+    App
+  ]
+})
+export class AppModule { }
+
+Step 2: Create Bootstrap class - main.ts
+---------------------------------------
+import { platformBrowser} from '@angular/platform-browser';
+
+import { AppModule } from './app/app.module';
+
+platformBrowser()
+  .bootstrapModule(AppModule)
+  .catch(err => console.error(err));
+
+Note: In all components make standalone as false and remove imports in HeaderComponent, UserComponent etc
+
+
+#############################
+Deep dive - pipes in angular
+#############################
+
+In Angular, pipes are a feature used to transform data in a template without changing the original value. They make it easy to format text, numbers, dates, currencies, and more.
+
+Note: For builtin pipes import CommonModule
+
+{{ "angular" | uppercase }}
+
+Example 1: 
+
+step 1: app.ts
+--------
+import { CommonModule } from '@angular/common';
+import { Component, signal } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  imports: [CommonModule],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App {
+value:string = 'angular'
+}
+
+
+Step 2: app.html
+----------------
+{{value | uppercase}}
+
+###########################
+CUSTOM PIPES 
+##########################
+
+Example 1:
+
+step 1: create reverse.pipe.ts file
+--------------------------------------
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'reverse',
+  standalone: true // 👈 IMPORTANT in standalone apps
+})
+export class ReversePipe implements PipeTransform {
+
+  transform(value: string): string {
+    if (!value) return '';
+    return value.split('').reverse().join('');
+  }
+}
+
+Step 2: update app.ts file
+--------------------------
+import { CommonModule } from '@angular/common';
+import { Component, signal } from '@angular/core';
+import { ReversePipe } from './reverse.pipe';
+
+@Component({
+  selector: 'app-root',
+  imports: [CommonModule, ReversePipe],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App {
+value:string = 'angular'
+today:Date = new Date();
+amount:number=1500;
+marks:number=0.85;
+
+customValue:string='angular';
+}
+
+
+Step 3: Update app.html
+<p>{{value | uppercase}}</p>
+<p>{{ today | date:'dd/MM/yyyy' }}</p>
+<p>{{amount | currency:'INR'}}</p>
+<p>{{marks | percent }}</p>
+
+<!-- pipes chaining -->
+ <p>{{ today | date:'fullDate' | uppercase }}</p>
+
+ <!--Some pipes accept parameters
+ {{ 5 | number:'1.2-2' }}
+  Because:
+
+At least 1 digit before decimal → 5
+At least 2 decimal places → .00
+Max 2 decimal places rounded → no extra rounding needed
+
+Example:
+{{ 12.3456 | number:'1.2-2' }}
+
+12.35
+
+Example:
+{{ 1234.5 | number:'1.2-2' }}
+ 1,234.50
+ -->
+ <p>{{ amount | currency:'USD':'symbol':'1.2-2' }}</p>
+
+ <p>{{customValue | reverse}}</p>
+
+
+
+########################################
+RxJs and Observables
+########################################
+
+What is an Observable?
+
+An Observable is an object that emits data over time. It can emit:
+
+One value
+Multiple values
+Values asynchronously
+
+Note:
+Observable → Producer (produces/emits data)
+Subscriber (subscribe()) → Consumer (receives and uses the data)
+---------------------------------------------------------------------
+
+What is RxJS?
+
+RxJS (Reactive Extensions for JavaScript) is a library used in Angular for handling asynchronous data such as:
+
+HTTP requests
+User events (clicks, keyboard input)
+Timers
+
+It is a third party library used by Angular. Angular internally uses RxJS to implement reactive features, and it returns RxJS Observables (for example in HttpClient, Forms, Router events, etc.).
+
+
+1. RxJs Creates Observable
+2. Observables emit values
+3. Subscribe Consume those values
+----------------------------------------------------------------------
+Note: OnInit is one of Angular's lifecycle hook interfaces. Lifecycle hooks are methods that Angular automatically executes in a specific order OR Angular lifecycle hooks are predefined methods that Angular calls automatically in a specific order during a component's lifecycle
+
+Example 1:
+import { Component, OnInit, signal } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  imports: [],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App implements OnInit{
+
+  constructor() {
+    console.log('Constructor called');
+  }
+
+  ngOnInit(): void {
+    console.log('ngOnInit called');
+  }
+}
+
+Output
+------
+Constructor called
+ngOnInit called
+
+Example 2: interval() method of RxJs and subscribe() to consume data
+-----------------------------------------------------------------------
+
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { log } from 'console';
+import { interval, Subscription } from 'rxjs';
+
+@Component({
+  selector: 'app-root',
+  imports: [],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App implements OnInit {
+
+  private unSubscribe = inject(DestroyRef);
+
+  ngOnInit(): void {
+    const val = interval(1000).subscribe(
+      {
+        next:(n)=>console.log(n),
+        complete:()=>console.log("completed")
+      }
+    );
+
+    this.unSubscribe.onDestroy(
+    ()=>{
+       val.unsubscribe();
+    }
+  );
+  }
+
+  
+}
+
+
+Example 2: Operators in RxJs can help us manipulate the values emiited by RxJs Functions
+----------------
+
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { log } from 'console';
+import { filter, interval, map, Subscription } from 'rxjs';
+
+@Component({
+  selector: 'app-root',
+  imports: [],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App implements OnInit {
+
+  private unSubscribe = inject(DestroyRef);
+
+  ngOnInit(): void {
+    const val = interval(1000).pipe(
+      filter((v)=> v%2!==0)
+      //map((v)=> v*2)
+    ).subscribe(
+      {
+        next:(n)=>console.log(n),
+      }
+    );
+
+    this.unSubscribe.onDestroy(
+    ()=>{
+       val.unsubscribe();
+    }
+  );
+  }
+
+  
+}
+
+Example 3: compelete is called after next finishes its execution
+-----------
+
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { log } from 'console';
+import { filter, of} from 'rxjs';
+
+@Component({
+  selector: 'app-root',
+  imports: [],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App implements OnInit {
+
+  private unSubscribe = inject(DestroyRef);
+
+  ngOnInit(): void {
+    of(1, 2, 3).subscribe({
+  next: (value) => console.log('Next:', value),
+  error: (err) => console.log('Error:', err),
+  complete: () => console.log('Completed!')
+    });
+  }
+
+  
+}
+Example 4: Error example we will cover during acutal project
+
+############################
+Http Request and Handling Request
+##############################
+
+
+
 
 
 
