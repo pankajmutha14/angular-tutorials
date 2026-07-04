@@ -7012,9 +7012,621 @@ export class App implements OnInit {
 }
 Example 4: Error example we will cover during acutal project
 
-############################
-Http Request and Handling Request
-##############################
+#####################################
+User Inputs and Handling Forms validation
+#####################################
+
+Angular provides 2 main approaches to handle forms
+
+1. Template Driven Forms
+2. Reactive Way Forms
+
+
+Lab Task 1:
+##########
+
+Steps to create Template driven form
+--------------------------------------
+
+Step 1: Develop a form in login.component.html
+-------------------------------------------------
+<form #form="ngForm" (ngSubmit)="onSubmit(form)">
+  <h2>Login</h2>
+
+  <div class="control-row">
+    <div class="control no-margin">
+      <label for="email">Email</label>
+      <input id="email" type="email" name="email" ngModel/>
+    </div>
+
+    <div class="control no-margin">
+      <label for="password">Password</label>
+      <input id="password" type="password" name="password" ngModel />
+    </div>
+
+    <button class="button">Login</button>
+  </div>
+</form>
+
+Step 2: Add the following css
+--------------------------
+
+
+.control-row {
+  align-items: flex-end;
+}
+
+.control {
+  flex: 1;
+}
+
+button {
+  padding: 0.6rem 1.75rem;
+}
+
+Step 3: Add selector tag to app.component.html
+---------------------
+<header>
+  <img src="logo.jpg" alt="A form and a pencil" />
+  <h1>Angular Forms</h1>
+</header>
+
+<app-login />
+
+Step 4: update login.component.ts
+---------------------------------
+import { Component } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
+
+
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports:[FormsModule],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css',
+})
+export class LoginComponent {
+      onSubmit(formData: NgForm) {
+         const enteredEmail = formData.form.value.email;
+         const enteredPassword = formData.form.value.password;
+         console.log(enteredEmail,enteredPassword);
+      }
+}
+
+
+Step 5: update style.css
+------------------------
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Lato:wght@400;700&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Lato", serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(#d0d6d9, #b1b4ba);
+  color: #d9e2f1;
+  min-height: 100vh;
+}
+
+header {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+header img {
+  width: 5rem;
+  height: 5rem;
+  object-fit: contain;
+  border-radius: 50%;
+  border: 2px solid #758a8a;
+  filter: drop-shadow(0 0 4px rgba(31, 42, 42, 0.5));
+}
+
+header h1 {
+  font-family: "Quicksand", sans-serif;
+  font-weight: 700;
+  font-size: 3rem;
+  margin: 1rem 0;
+  letter-spacing: 0.2rem;
+  color: #2f4444;
+}
+
+form {
+  width: 90%;
+  max-width: 40rem;
+  margin: 3rem auto;
+  padding: 2rem;
+  background: linear-gradient(180deg, #253c3c, #1d4949);
+  border-radius: 8px;
+  box-shadow: 0 0 16px 1px rgba(0, 0, 0, 0.5);
+}
+
+.control,
+fieldset {
+  margin: 0.5rem 0;
+}
+
+.control.no-margin {
+  margin-bottom: 0;
+}
+
+.control label {
+  display: block;
+  font-size: 0.8rem;
+  margin-bottom: 0.2rem;
+  color: #9bafaf;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.control input {
+  display: block;
+  width: 100%;
+  max-width: 15rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #758a8a;
+  background-color: #869999;
+  color: #142020;
+}
+
+.control select {
+  display: block;
+  width: 100%;
+  max-width: 15rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #758a8a;
+  background-color: #869999;
+  color: #142020;
+}
+
+.control:has(input[type="checkbox"]) {
+  display: flex;
+  align-items: center;
+}
+
+.control:has(input[type="checkbox"]) label {
+  margin: 0;
+}
+
+.control input[type="checkbox"] {
+  display: inline-block;
+  width: auto;
+  max-width: none;
+  margin-right: 0.5rem;
+  border-radius: 0;
+  border: none;
+  background-color: transparent;
+  color: #d9e2f1;
+}
+
+.control-error {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  color: #ffca99;
+  height: 0.5rem;
+  padding: 0.25rem 0 0 0;
+  height: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.control-error p {
+  margin: 0;
+}
+
+.control-row {
+  margin: 0.5rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+.control-row .control {
+  flex: 1;
+}
+
+hr {
+  margin: 1.5rem 0;
+  border: 1px solid #147b73;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: none;
+  background-color: #147b73;
+  color: #d9e2f1;
+  cursor: pointer;
+}
+
+.button:hover,
+.button:focus {
+  background-color: #319890;
+}
+
+.button-flat {
+  background-color: transparent;
+  color: #9cbaba;
+}
+
+.button-flat:hover,
+.button-flat:focus {
+  background-color: transparent;
+  color: #869999;
+}
+
+
+
+Lab Task 2: Validation 
+##########
+
+<form #form="ngForm" (ngSubmit)="onSubmit(form)">
+  <h2>Login</h2>
+
+  <div class="control-row">
+    <div class="control no-margin">
+      <label for="email">Email</label>
+      <input id="email" type="email" name="email" ngModel required email #email="ngModel"/>
+    </div>
+
+    <div class="control no-margin">
+      <label for="password">Password</label>
+      <input id="password" type="password" name="password" ngModel required minlength="6" #password="ngModel" />
+    </div>
+
+    <button class="button">Login</button>
+  </div>
+
+  @if (email.touched && password.touched && form.form.invalid) {
+    <p calss="control-error">Invalid input</p>
+  }
+  
+</form>
+
+Lab Task 2: Angular Injects few css classes automatically
+##########
+
+<input _ngcontent-ng-c2064646189="" id="email" type="email" name="email" ngmodel="" required="" email="" ng-reflect-required="" ng-reflect-email="" ng-reflect-name="email" ng-reflect-model="" class="ng-dirty ng-touched ng-invalid">
+
+class="ng-dirty ng-touched ng-invalid   --> These are added automatically to html by Angular
+
+Step 1: update style.css 
+
+input.ng-invalid.ng-touched {
+  border: 2px solid red;
+  outline: none;
+}
+
+
+Lab Task 3: Further improvements in validation
+##########
+<form #data="ngForm" (ngSubmit)="onSubmit(data)">
+  <h2>Login</h2>
+
+  <div class="control-row">
+    <div class="control no-margin">
+      <label for="email">Email</label>
+      <input id="email" type="email" name="email" ngModel required email #email="ngModel"/>
+    </div>
+
+    <div class="control no-margin">
+      <label for="password">Password</label>
+      <input id="password" type="password" name="password" ngModel required minlength="6" #password="ngModel" />
+    </div>
+
+    <button class="button">Login</button>
+  </div>
+
+  @if (email.touched && email.dirty && email.invalid) {
+    <p calss="control-error">Invalid email address</p>
+  }
+
+   @if (password.touched && password.dirty && password.invalid) {
+    <p calss="control-error">Invalid password address</p>
+  }
+  
+</form>
+
+Lab Task 4: Further improvements - reset the form
+##########
+
+import { Component } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
+
+
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports:[FormsModule],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css',
+})
+export class LoginComponent {
+      onSubmit(formData: NgForm) {
+
+        if(formData.form.invalid){
+          return;
+        }
+         const enteredEmail = formData.form.value.email;
+         const enteredPassword = formData.form.value.password;
+         console.log(enteredEmail,enteredPassword);
+         
+         formData.form.reset();
+      }
+}
+
+Lab Task 5: Further improvements - reset the form
+##########
+
+
+import { Component } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
+
+
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports:[FormsModule],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css',
+})
+export class LoginComponent {
+      onSubmit(formData: NgForm) {
+
+        if(formData.form.invalid){
+          return;
+        }
+         const enteredEmail = formData.form.value.email;
+         const enteredPassword = formData.form.value.password;
+         console.log(enteredEmail,enteredPassword);
+         
+         formData.form.reset();
+      }
+}
+
+######################
+Reactive Forms
+#####################
+
+LAB TASK 1: Develop Reactive Form and supply data
+
+------------
+Step 1: login.component.ts
+---------------------
+import { Component } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports:[ReactiveFormsModule],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css',
+})
+export class LoginComponent {
+
+
+  form = new FormGroup({
+    email: new FormControl(''),
+    password: new FormControl('')
+  });
+
+  onSubmit() {
+       const enteredEmail = this.form.value.email;
+       const enteredPassword = this.form.value.password;
+        console.log(enteredEmail,enteredPassword);
+        
+        
+    }
+
+}
+
+Step 2: login.component.html
+--------------------------
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h2>Login</h2>
+
+  <div class="control-row">
+    <div class="control no-margin">
+      <label for="email">Email</label>
+      <input id="email" type="email" [formControl]="form.controls.email"/>
+    </div>
+
+    <div class="control no-margin">
+      <label for="password">Password</label>
+      <input id="password" type="password" formControlName="password"/>
+    </div>
+
+    <button class="button">Login</button>
+  </div>
+</form>
+
+
+LAB TASK 2: Performing Validation
+################
+
+Step 1: Update login.component.ts
+import { Component } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports:[ReactiveFormsModule],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css',
+})
+export class LoginComponent {
+
+
+  form = new FormGroup({
+    email: new FormControl('',{
+      validators:[Validators.email, Validators.required],
+    }),
+    password: new FormControl('',{
+      validators:[Validators.email, Validators.required, Validators.minLength(6)],
+    })
+  });
+
+  get isEmailValid(){
+    return (this.form.controls.email.touched && this.form.controls.email.dirty && this.form.controls.email.invalid);
+  }
+
+   get isPasswordValid(){
+    return (this.form.controls.password.touched 
+      && this.form.controls.password.dirty 
+      && this.form.controls.password.invalid);
+  }
+
+  onSubmit() {
+       const enteredEmail = this.form.value.email;
+       const enteredPassword = this.form.value.password;
+        console.log(enteredEmail,enteredPassword);
+        
+        
+    }
+
+}
+
+Step 2: Update login.component.html
+------------------------
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h2>Login</h2>
+
+  <div class="control-row">
+    <div class="control no-margin">
+      <label for="email">Email</label>
+      <input id="email" type="email" [formControl]="form.controls.email"/>
+    </div>
+
+    <div class="control no-margin">
+      <label for="password">Password</label>
+      <input id="password" type="password" formControlName="password"/>
+    </div>
+
+    <button class="button">Login</button>
+  </div>
+
+  @if(isEmailValid){
+    <p class="control-error">Email is Invalid</p>
+  }
+
+  @if(isPasswordValid){
+    <p class="control-error">Password should be minimum 6 characters</p>
+  }
+  
+  
+</form>
+
+LAB TASK 3: CREATING CUSTOM VALIDATORS
+----------------------------------------
+Step 1: login.component.ts
+--------------------------
+import { Component } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+
+function mustContainQuestionMark(control:AbstractControl){
+     if(control.value.includes('?')){
+      return null;
+     }
+
+     return {doesContainQuestionMark:true};
+}
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports:[ReactiveFormsModule],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css',
+})
+
+export class LoginComponent {
+
+
+  form = new FormGroup({
+    email: new FormControl('',{
+      validators:[Validators.email, Validators.required],
+    }),
+    password: new FormControl('',{
+      validators:[Validators.email, Validators.required, Validators.minLength(6), mustContainQuestionMark],
+    })
+  });
+
+  get isEmailValid(){
+    return (this.form.controls.email.touched && this.form.controls.email.dirty && this.form.controls.email.invalid);
+  }
+
+   get isPasswordValid(){
+    return (this.form.controls.password.touched 
+      && this.form.controls.password.dirty 
+      && this.form.controls.password.invalid);
+  }
+
+  onSubmit() {
+       const enteredEmail = this.form.value.email;
+       const enteredPassword = this.form.value.password;
+        console.log(enteredEmail,enteredPassword);
+        
+        
+    }
+
+}
+
+
+Step 2: login.component.html
+----------------------------
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h2>Login</h2>
+
+  <div class="control-row">
+    <div class="control no-margin">
+      <label for="email">Email</label>
+      <input id="email" type="email" [formControl]="form.controls.email"/>
+    </div>
+
+    <div class="control no-margin">
+      <label for="password">Password</label>
+      <input id="password" type="password" formControlName="password"/>
+    </div>
+
+    <button class="button">Login</button>
+  </div>
+
+  @if(isEmailValid){
+    <p class="control-error">Email is Invalid</p>
+  }
+
+  @if(isPasswordValid){
+    <p class="control-error">Password should be minimum 6 characters </p>
+  }
+  
+  
+</form>
+
+
+
+
+
+
+
+
 
 
 
