@@ -4182,9 +4182,9 @@ step 2:update app.html
 LAB TASK 14 - Component Inputs from another component
 #####################
 
-app.ts(Make DUMMY_USERS available)----DUMMY_USERS--->app.html-->[avatar] gets image url this from app.ts--->user.ts--->user.html
-
 @Input() allows a parent component to pass data to a child component. The child component receives that data and stores it in a property.
+
+Parent component passes data to the child component using property binding on the child selector, and the child receives it using @Input() in the child TypeScript file, then uses it in the child HTML template.
 
 
 Step 1: update app.ts
@@ -6697,8 +6697,1495 @@ export class TasksService{
   }
 }
 
+##########################
+Angular Module - For Older Applications before Angular 14 version
+##########################
+
+We will migrate our standalone application to module based
+
+Step 1: create 'app.module.ts' inside app forlder
+
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { App } from './app';
+import { HeaderComponent } from './header/header';
+import { TasksComponent } from './tasks/tasks';
+import { TaskComponent } from './tasks/task/task';
+import { NewTask } from './tasks/new-task/new-task';
+import { DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { UserComponent } from './user/user';
+
+@NgModule({
+  declarations: [
+    App,
+     HeaderComponent, TasksComponent, TaskComponent, NewTask, UserComponent
+  ],
+  imports: [
+    BrowserModule
+  ],
+  bootstrap: [
+    App
+  ]
+})
+export class AppModule { }
+
+Step 2: Create Bootstrap class - main.ts
+---------------------------------------
+import { platformBrowser} from '@angular/platform-browser';
+
+import { AppModule } from './app/app.module';
+
+platformBrowser()
+  .bootstrapModule(AppModule)
+  .catch(err => console.error(err));
+
+Note: In all components make standalone as false and remove imports in HeaderComponent, UserComponent etc
+
+
+#############################
+Deep dive - pipes in angular
+#############################
+
+In Angular, pipes are a feature used to transform data in a template without changing the original value. They make it easy to format text, numbers, dates, currencies, and more.
+
+Note: For builtin pipes import CommonModule
+
+{{ "angular" | uppercase }}
+
+Example 1: 
+
+step 1: app.ts
+--------
+import { CommonModule } from '@angular/common';
+import { Component, signal } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  imports: [CommonModule],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App {
+value:string = 'angular'
+}
+
+
+Step 2: app.html
+----------------
+{{value | uppercase}}
+
+###########################
+CUSTOM PIPES 
+##########################
+
+Example 1:
+
+step 1: create reverse.pipe.ts file
+--------------------------------------
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'reverse',
+  standalone: true // 👈 IMPORTANT in standalone apps
+})
+export class ReversePipe implements PipeTransform {
+
+  transform(value: string): string {
+    if (!value) return '';
+    return value.split('').reverse().join('');
+  }
+}
+
+Step 2: update app.ts file
+--------------------------
+import { CommonModule } from '@angular/common';
+import { Component, signal } from '@angular/core';
+import { ReversePipe } from './reverse.pipe';
+
+@Component({
+  selector: 'app-root',
+  imports: [CommonModule, ReversePipe],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App {
+value:string = 'angular'
+today:Date = new Date();
+amount:number=1500;
+marks:number=0.85;
+
+customValue:string='angular';
+}
+
+
+Step 3: Update app.html
+<p>{{value | uppercase}}</p>
+<p>{{ today | date:'dd/MM/yyyy' }}</p>
+<p>{{amount | currency:'INR'}}</p>
+<p>{{marks | percent }}</p>
+
+<!-- pipes chaining -->
+ <p>{{ today | date:'fullDate' | uppercase }}</p>
+
+ <!--Some pipes accept parameters
+ {{ 5 | number:'1.2-2' }}
+  Because:
+
+At least 1 digit before decimal → 5
+At least 2 decimal places → .00
+Max 2 decimal places rounded → no extra rounding needed
+
+Example:
+{{ 12.3456 | number:'1.2-2' }}
+
+12.35
+
+Example:
+{{ 1234.5 | number:'1.2-2' }}
+ 1,234.50
+ -->
+ <p>{{ amount | currency:'USD':'symbol':'1.2-2' }}</p>
+
+ <p>{{customValue | reverse}}</p>
 
 
 
+########################################
+RxJs and Observables
+########################################
 
+What is an Observable?
+
+An Observable is an object that emits data over time. It can emit:
+
+One value
+Multiple values
+Values asynchronously
+
+Note:
+Observable → Producer (produces/emits data)
+Subscriber (subscribe()) → Consumer (receives and uses the data)
+---------------------------------------------------------------------
+
+What is RxJS?
+
+RxJS (Reactive Extensions for JavaScript) is a library used in Angular for handling asynchronous data such as:
+
+HTTP requests
+User events (clicks, keyboard input)
+Timers
+
+It is a third party library used by Angular. Angular internally uses RxJS to implement reactive features, and it returns RxJS Observables (for example in HttpClient, Forms, Router events, etc.).
+
+
+1. RxJs Creates Observable
+2. Observables emit values
+3. Subscribe Consume those values
+----------------------------------------------------------------------
+Note: OnInit is one of Angular's lifecycle hook interfaces. Lifecycle hooks are methods that Angular automatically executes in a specific order OR Angular lifecycle hooks are predefined methods that Angular calls automatically in a specific order during a component's lifecycle
+
+Example 1:
+import { Component, OnInit, signal } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  imports: [],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App implements OnInit{
+
+  constructor() {
+    console.log('Constructor called');
+  }
+
+  ngOnInit(): void {
+    console.log('ngOnInit called');
+  }
+}
+
+Output
+------
+Constructor called
+ngOnInit called
+
+Example 2: interval() method of RxJs and subscribe() to consume data
+-----------------------------------------------------------------------
+
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { log } from 'console';
+import { interval, Subscription } from 'rxjs';
+
+@Component({
+  selector: 'app-root',
+  imports: [],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App implements OnInit {
+
+  private unSubscribe = inject(DestroyRef);
+
+  ngOnInit(): void {
+    const val = interval(1000).subscribe(
+      {
+        next:(n)=>console.log(n),
+        complete:()=>console.log("completed")
+      }
+    );
+
+    this.unSubscribe.onDestroy(
+    ()=>{
+       val.unsubscribe();
+    }
+  );
+  }
+
+  
+}
+
+
+Example 2: Operators in RxJs can help us manipulate the values emiited by RxJs Functions
+----------------
+
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { log } from 'console';
+import { filter, interval, map, Subscription } from 'rxjs';
+
+@Component({
+  selector: 'app-root',
+  imports: [],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App implements OnInit {
+
+  private unSubscribe = inject(DestroyRef);
+
+  ngOnInit(): void {
+    const val = interval(1000).pipe(
+      filter((v)=> v%2!==0)
+      //map((v)=> v*2)
+    ).subscribe(
+      {
+        next:(n)=>console.log(n),
+      }
+    );
+
+    this.unSubscribe.onDestroy(
+    ()=>{
+       val.unsubscribe();
+    }
+  );
+  }
+
+  
+}
+
+Example 3: compelete is called after next finishes its execution
+-----------
+
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { log } from 'console';
+import { filter, of} from 'rxjs';
+
+@Component({
+  selector: 'app-root',
+  imports: [],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App implements OnInit {
+
+  private unSubscribe = inject(DestroyRef);
+
+  ngOnInit(): void {
+    of(1, 2, 3).subscribe({
+  next: (value) => console.log('Next:', value),
+  error: (err) => console.log('Error:', err),
+  complete: () => console.log('Completed!')
+    });
+  }
+
+  
+}
+Example 4: Error example we will cover during acutal project
+
+#####################################
+User Inputs and Handling Forms validation
+#####################################
+
+Angular provides 2 main approaches to handle forms
+
+1. Template Driven Forms
+2. Reactive Way Forms
+
+
+Lab Task 1:
+##########
+
+Steps to create Template driven form
+--------------------------------------
+
+Step 1: Develop a form in login.component.html
+-------------------------------------------------
+<form #form="ngForm" (ngSubmit)="onSubmit(form)">
+  <h2>Login</h2>
+
+  <div class="control-row">
+    <div class="control no-margin">
+      <label for="email">Email</label>
+      <input id="email" type="email" name="email" ngModel/>
+    </div>
+
+    <div class="control no-margin">
+      <label for="password">Password</label>
+      <input id="password" type="password" name="password" ngModel />
+    </div>
+
+    <button class="button">Login</button>
+  </div>
+</form>
+
+Step 2: Add the following css
+--------------------------
+
+
+.control-row {
+  align-items: flex-end;
+}
+
+.control {
+  flex: 1;
+}
+
+button {
+  padding: 0.6rem 1.75rem;
+}
+
+Step 3: Add selector tag to app.component.html
+---------------------
+<header>
+  <img src="logo.jpg" alt="A form and a pencil" />
+  <h1>Angular Forms</h1>
+</header>
+
+<app-login />
+
+Step 4: update login.component.ts
+---------------------------------
+import { Component } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
+
+
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports:[FormsModule],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css',
+})
+export class LoginComponent {
+      onSubmit(formData: NgForm) {
+         const enteredEmail = formData.form.value.email;
+         const enteredPassword = formData.form.value.password;
+         console.log(enteredEmail,enteredPassword);
+      }
+}
+
+
+Step 5: update style.css
+------------------------
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Lato:wght@400;700&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Lato", serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(#d0d6d9, #b1b4ba);
+  color: #d9e2f1;
+  min-height: 100vh;
+}
+
+header {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+header img {
+  width: 5rem;
+  height: 5rem;
+  object-fit: contain;
+  border-radius: 50%;
+  border: 2px solid #758a8a;
+  filter: drop-shadow(0 0 4px rgba(31, 42, 42, 0.5));
+}
+
+header h1 {
+  font-family: "Quicksand", sans-serif;
+  font-weight: 700;
+  font-size: 3rem;
+  margin: 1rem 0;
+  letter-spacing: 0.2rem;
+  color: #2f4444;
+}
+
+form {
+  width: 90%;
+  max-width: 40rem;
+  margin: 3rem auto;
+  padding: 2rem;
+  background: linear-gradient(180deg, #253c3c, #1d4949);
+  border-radius: 8px;
+  box-shadow: 0 0 16px 1px rgba(0, 0, 0, 0.5);
+}
+
+.control,
+fieldset {
+  margin: 0.5rem 0;
+}
+
+.control.no-margin {
+  margin-bottom: 0;
+}
+
+.control label {
+  display: block;
+  font-size: 0.8rem;
+  margin-bottom: 0.2rem;
+  color: #9bafaf;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.control input {
+  display: block;
+  width: 100%;
+  max-width: 15rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #758a8a;
+  background-color: #869999;
+  color: #142020;
+}
+
+.control select {
+  display: block;
+  width: 100%;
+  max-width: 15rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #758a8a;
+  background-color: #869999;
+  color: #142020;
+}
+
+.control:has(input[type="checkbox"]) {
+  display: flex;
+  align-items: center;
+}
+
+.control:has(input[type="checkbox"]) label {
+  margin: 0;
+}
+
+.control input[type="checkbox"] {
+  display: inline-block;
+  width: auto;
+  max-width: none;
+  margin-right: 0.5rem;
+  border-radius: 0;
+  border: none;
+  background-color: transparent;
+  color: #d9e2f1;
+}
+
+.control-error {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  color: #ffca99;
+  height: 0.5rem;
+  padding: 0.25rem 0 0 0;
+  height: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.control-error p {
+  margin: 0;
+}
+
+.control-row {
+  margin: 0.5rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+.control-row .control {
+  flex: 1;
+}
+
+hr {
+  margin: 1.5rem 0;
+  border: 1px solid #147b73;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: none;
+  background-color: #147b73;
+  color: #d9e2f1;
+  cursor: pointer;
+}
+
+.button:hover,
+.button:focus {
+  background-color: #319890;
+}
+
+.button-flat {
+  background-color: transparent;
+  color: #9cbaba;
+}
+
+.button-flat:hover,
+.button-flat:focus {
+  background-color: transparent;
+  color: #869999;
+}
+
+
+
+Lab Task 2: Validation 
+##########
+
+<form #form="ngForm" (ngSubmit)="onSubmit(form)">
+  <h2>Login</h2>
+
+  <div class="control-row">
+    <div class="control no-margin">
+      <label for="email">Email</label>
+      <input id="email" type="email" name="email" ngModel required email #email="ngModel"/>
+    </div>
+
+    <div class="control no-margin">
+      <label for="password">Password</label>
+      <input id="password" type="password" name="password" ngModel required minlength="6" #password="ngModel" />
+    </div>
+
+    <button class="button">Login</button>
+  </div>
+
+  @if (email.touched && password.touched && form.form.invalid) {
+    <p calss="control-error">Invalid input</p>
+  }
+  
+</form>
+
+Lab Task 2: Angular Injects few css classes automatically
+##########
+
+<input _ngcontent-ng-c2064646189="" id="email" type="email" name="email" ngmodel="" required="" email="" ng-reflect-required="" ng-reflect-email="" ng-reflect-name="email" ng-reflect-model="" class="ng-dirty ng-touched ng-invalid">
+
+class="ng-dirty ng-touched ng-invalid   --> These are added automatically to html by Angular
+
+Step 1: update style.css 
+
+input.ng-invalid.ng-touched {
+  border: 2px solid red;
+  outline: none;
+}
+
+
+Lab Task 3: Further improvements in validation
+##########
+<form #data="ngForm" (ngSubmit)="onSubmit(data)">
+  <h2>Login</h2>
+
+  <div class="control-row">
+    <div class="control no-margin">
+      <label for="email">Email</label>
+      <input id="email" type="email" name="email" ngModel required email #email="ngModel"/>
+    </div>
+
+    <div class="control no-margin">
+      <label for="password">Password</label>
+      <input id="password" type="password" name="password" ngModel required minlength="6" #password="ngModel" />
+    </div>
+
+    <button class="button">Login</button>
+  </div>
+
+  @if (email.touched && email.dirty && email.invalid) {
+    <p calss="control-error">Invalid email address</p>
+  }
+
+   @if (password.touched && password.dirty && password.invalid) {
+    <p calss="control-error">Invalid password address</p>
+  }
+  
+</form>
+
+Lab Task 4: Further improvements - reset the form
+##########
+
+import { Component } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
+
+
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports:[FormsModule],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css',
+})
+export class LoginComponent {
+      onSubmit(formData: NgForm) {
+
+        if(formData.form.invalid){
+          return;
+        }
+         const enteredEmail = formData.form.value.email;
+         const enteredPassword = formData.form.value.password;
+         console.log(enteredEmail,enteredPassword);
+         
+         formData.form.reset();
+      }
+}
+
+Lab Task 5: Further improvements - reset the form
+##########
+
+
+import { Component } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
+
+
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports:[FormsModule],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css',
+})
+export class LoginComponent {
+      onSubmit(formData: NgForm) {
+
+        if(formData.form.invalid){
+          return;
+        }
+         const enteredEmail = formData.form.value.email;
+         const enteredPassword = formData.form.value.password;
+         console.log(enteredEmail,enteredPassword);
+         
+         formData.form.reset();
+      }
+}
+
+######################
+Reactive Forms
+#####################
+
+LAB TASK 1: Develop Reactive Form and supply data
+
+------------
+Step 1: login.component.ts
+---------------------
+import { Component } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports:[ReactiveFormsModule],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css',
+})
+export class LoginComponent {
+
+
+  form = new FormGroup({
+    email: new FormControl(''),
+    password: new FormControl('')
+  });
+
+  onSubmit() {
+       const enteredEmail = this.form.value.email;
+       const enteredPassword = this.form.value.password;
+        console.log(enteredEmail,enteredPassword);
+        
+        
+    }
+
+}
+
+Step 2: login.component.html
+--------------------------
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h2>Login</h2>
+
+  <div class="control-row">
+    <div class="control no-margin">
+      <label for="email">Email</label>
+      <input id="email" type="email" [formControl]="form.controls.email"/>
+    </div>
+
+    <div class="control no-margin">
+      <label for="password">Password</label>
+      <input id="password" type="password" formControlName="password"/>
+    </div>
+
+    <button class="button">Login</button>
+  </div>
+</form>
+
+
+LAB TASK 2: Performing Validation
+################
+
+Step 1: Update login.component.ts
+import { Component } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports:[ReactiveFormsModule],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css',
+})
+export class LoginComponent {
+
+
+  form = new FormGroup({
+    email: new FormControl('',{
+      validators:[Validators.email, Validators.required],
+    }),
+    password: new FormControl('',{
+      validators:[Validators.email, Validators.required, Validators.minLength(6)],
+    })
+  });
+
+  get isEmailValid(){
+    return (this.form.controls.email.touched && this.form.controls.email.dirty && this.form.controls.email.invalid);
+  }
+
+   get isPasswordValid(){
+    return (this.form.controls.password.touched 
+      && this.form.controls.password.dirty 
+      && this.form.controls.password.invalid);
+  }
+
+  onSubmit() {
+       const enteredEmail = this.form.value.email;
+       const enteredPassword = this.form.value.password;
+        console.log(enteredEmail,enteredPassword);
+        
+        
+    }
+
+}
+
+Step 2: Update login.component.html
+------------------------
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h2>Login</h2>
+
+  <div class="control-row">
+    <div class="control no-margin">
+      <label for="email">Email</label>
+      <input id="email" type="email" [formControl]="form.controls.email"/>
+    </div>
+
+    <div class="control no-margin">
+      <label for="password">Password</label>
+      <input id="password" type="password" formControlName="password"/>
+    </div>
+
+    <button class="button">Login</button>
+  </div>
+
+  @if(isEmailValid){
+    <p class="control-error">Email is Invalid</p>
+  }
+
+  @if(isPasswordValid){
+    <p class="control-error">Password should be minimum 6 characters</p>
+  }
+  
+  
+</form>
+
+LAB TASK 3: CREATING CUSTOM VALIDATORS
+----------------------------------------
+Step 1: login.component.ts
+--------------------------
+import { Component } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+
+function mustContainQuestionMark(control:AbstractControl){
+     if(control.value.includes('?')){
+      return null;
+     }
+
+     return {doesContainQuestionMark:true};
+}
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports:[ReactiveFormsModule],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css',
+})
+
+export class LoginComponent {
+
+
+  form = new FormGroup({
+    email: new FormControl('',{
+      validators:[Validators.email, Validators.required],
+    }),
+    password: new FormControl('',{
+      validators:[Validators.email, Validators.required, Validators.minLength(6), mustContainQuestionMark],
+    })
+  });
+
+  get isEmailValid(){
+    return (this.form.controls.email.touched && this.form.controls.email.dirty && this.form.controls.email.invalid);
+  }
+
+   get isPasswordValid(){
+    return (this.form.controls.password.touched 
+      && this.form.controls.password.dirty 
+      && this.form.controls.password.invalid);
+  }
+
+  onSubmit() {
+       const enteredEmail = this.form.value.email;
+       const enteredPassword = this.form.value.password;
+        console.log(enteredEmail,enteredPassword);
+        
+        
+    }
+
+}
+
+
+Step 2: login.component.html
+----------------------------
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h2>Login</h2>
+
+  <div class="control-row">
+    <div class="control no-margin">
+      <label for="email">Email</label>
+      <input id="email" type="email" [formControl]="form.controls.email"/>
+    </div>
+
+    <div class="control no-margin">
+      <label for="password">Password</label>
+      <input id="password" type="password" formControlName="password"/>
+    </div>
+
+    <button class="button">Login</button>
+  </div>
+
+  @if(isEmailValid){
+    <p class="control-error">Email is Invalid</p>
+  }
+
+  @if(isPasswordValid){
+    <p class="control-error">Password should be minimum 6 characters </p>
+  }
+  
+  
+</form>
+
+
+#####################
+Routing
+####################
+
+What is Routing?
+
+Routing is the process of navigating between different components in a Single Page Application (SPA) without reloading the entire webpage.
+
+
+LAB TASK 1
+------------
+
+Project Structure
+----------------------
+src
+│
+├── app
+│   ├── home
+│   │     ├── home.component.ts
+│   │     ├── home.component.html
+│   │
+│   ├── about
+│   │     ├── about.component.ts
+│   │     ├── about.component.html
+│   │
+│   ├── contact
+│   │     ├── contact.component.ts
+│   │     ├── contact.component.html
+│   │
+│   ├── app.routes.ts
+│   ├── app.component.html
+│   └── app.component.ts
+
+Step 1: Create Components
+------------------------
+ng generate component home
+
+ng generate component about
+
+ng generate component contact
+
+Step 2: Configure Routes - app.routes.ts
+
+import { Routes } from '@angular/router';
+
+import { HomeComponent } from './home/home.component';
+import { AboutComponent } from './about/about.component';
+import { ContactComponent } from './contact/contact.component';
+
+export const routes: Routes = [
+
+    {
+        path: '',
+        redirectTo: 'home',
+        pathMatch: 'full'
+    },
+
+    {
+        path: 'home',
+        component: HomeComponent
+    },
+
+    {
+        path: 'about',
+        component: AboutComponent
+    },
+
+    {
+        path: 'contact',
+        component: ContactComponent
+    }
+];
+
+Step 3: Register Routes - If using Standalone Angular (Angular 17+) - app.config.ts
+import { ApplicationConfig } from '@angular/core';
+import { provideRouter } from '@angular/router';
+import { routes } from './app.routes';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideRouter(routes)
+  ]
+};
+
+If using NgModules (older versions)
+
+imports: [
+RouterModule.forRoot(routes)
+]
+
+Step 4: Add Navigation - app.component.html
+<h1>Angular Routing Demo</h1>
+
+<nav>
+
+<a routerLink="/home">Home</a> |
+
+<a routerLink="/about">About</a> |
+
+<a routerLink="/contact">Contact</a>
+
+</nav>
+
+<hr>
+
+<router-outlet></router-outlet>
+
+Note: <router-outlet></router-outlet> - Is a place holder where selected link component is loaded making it SPA.
+
+Step 5: Update app.component.ts
+--------------------
+import { Component, signal } from '@angular/core';
+import { RouterLink, RouterOutlet } from '@angular/router';
+
+@Component({
+  selector: 'app-root',
+  imports: [RouterOutlet,RouterLink], //Import RouterLink to enable <router-outlet/>
+  templateUrl: './app.html',
+  styleUrl: './app.css',
+  standalone:true
+})
+export class App {
+  protected readonly title = signal('router-examples');
+}
+
+Application Flow
+----------------
+Browser
+
+↓
+
+localhost:4200
+
+↓
+
+''
+
+↓
+
+Redirect
+
+↓
+
+/home
+
+↓
+
+HomeComponent
+
+↓
+
+router-outlet
+
+↓
+
+Display Home Page
+
+##################
+Route Parameters Example
+####################
+
+Step 1: Update app.modules.ts
+----------------------------------
+import { Routes } from '@angular/router';
+import { HomeComponent } from './home/home';
+import { AboutComponent } from './about/about';
+import { ContactComponent } from './contactcls/contactcls';
+
+
+export const routes: Routes = [
+
+    {
+        path: '',
+        redirectTo: 'home',
+        pathMatch: 'full'
+    },
+
+    {
+        path: 'home',
+        component: HomeComponent
+    },
+
+    {
+        path: 'about',
+        component: AboutComponent
+    },
+
+    {
+        path: 'contact',
+        component: ContactComponent
+    },
+    {
+        path: 'contacts/:id',
+        component: ContactComponent
+}
+];
+
+Step 2: update contact.component.ts
+----------------------------------
+import { Component, Input } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+
+@Component({
+  selector: 'app-contactcls',
+  imports: [],
+  templateUrl: './contactcls.html',
+  styleUrl: './contactcls.css',
+  standalone:true
+})
+export class ContactComponent{
+
+   contactId = '';
+
+  constructor(private route: ActivatedRoute) {}
+
+  ngOnInit() {
+    this.contactId = this.route.snapshot.paramMap.get('id')!;
+  }
+}
+
+
+Step 3: Update contact.component.html
+------------------------------------
+<p>contactcls works!</p>
+
+<h2>Contact ID: {{ contactId }}</h2>
+
+Step 4: Update app.component.html
+---------------------
+
+<h1>Angular Routing Demo</h1>
+
+<nav>
+
+<a routerLink="/home">Home</a> |
+
+<a routerLink="/about">About</a> |
+
+<a routerLink="/contact">Contact</a> | 
+
+<a [routerLink]="['/contacts',101]">Contact By Id</a>
+
+</nav>
+
+<hr>
+
+<router-outlet></router-outlet>
+
+##############################
+A Not Found (404) route is used to display a custom page when the user enters an invalid URL.
+###############################
+
+Step 1: Generate a Not Found Component
+ng g c page-not-found
+
+Step 2: Create the Component Template
+
+page-not-found.html
+
+<h2>404 - Page Not Found</h2>
+
+<p>The page you are looking for does not exist.</p>
+
+<a routerLink="/home">Go to Home</a>
+
+
+Step 3: Update app.routes.ts
+
+Add the wildcard route ('**') at the end of the routes array.
+
+import { Routes } from '@angular/router';
+import { HomeComponent } from './home/home';
+import { AboutComponent } from './about/about';
+import { ContactComponent } from './contactcls/contactcls';
+import { PageNotFoundComponent } from './page-not-found/page-not-found';
+
+export const routes: Routes = [
+  {
+    path: '',
+    redirectTo: 'home',
+    pathMatch: 'full'
+  },
+  {
+    path: 'home',
+    component: HomeComponent
+  },
+  {
+    path: 'about',
+    component: AboutComponent
+  },
+  {
+    path: 'contact',
+    component: ContactComponent
+  },
+
+  // Always keep this route last
+  {
+    path: '**',
+    component: PageNotFoundComponent
+  }
+];
+
+Step 4: import RouterLink page-not-found.ts file
+
+import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+
+@Component({
+  selector: 'app-page-not-found',
+  imports: [RouterLink],
+  templateUrl: './page-not-found.html',
+  styleUrl: './page-not-found.css',
+})
+export class PageNotFoundComponent {}
+
+#######################
+Angular Child Routing Example (Standalone - Angular 17+)
+
+Child routing allows you to display one component inside another component. It is useful for modules like Admin, where multiple related pages share a common layout.
+#########################
+
+Step 1: Generate Components
+ng g c admin
+ng g c dashboard
+ng g c users
+ng g c settings
+
+Project Structure
+app
+│
+├── admin
+│     ├── admin.ts
+│     ├── admin.html
+│
+├── dashboard
+├── users
+├── settings
+│
+└── app.routes.ts
+
+Step 2: Configure Child Routes
+
+app.routes.ts
+
+import { Routes } from '@angular/router';
+
+import { AdminComponent } from './admin/admin';
+import { DashboardComponent } from './dashboard/dashboard';
+import { UsersComponent } from './users/users';
+import { SettingsComponent } from './settings/settings';
+
+export const routes: Routes = [
+
+  {
+    path: 'admin',
+    component: AdminComponent,
+
+    children: [
+
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+
+      {
+        path: 'dashboard',
+        component: DashboardComponent
+      },
+
+      {
+        path: 'users',
+        component: UsersComponent
+      },
+
+      {
+        path: 'settings',
+        component: SettingsComponent
+      }
+
+    ]
+  }
+
+];
+
+Explanation
+admin is the parent route.
+dashboard, users, and settings are child routes.
+Visiting /admin automatically redirects to /admin/dashboard.
+
+Step 3: Parent Component
+
+admin.html
+
+<h2>Admin Portal</h2>
+
+<nav>
+    <a routerLink="dashboard">Dashboard</a> |
+    <a routerLink="users">Users</a> |
+    <a routerLink="settings">Settings</a>
+</nav>
+
+<hr>
+
+<router-outlet></router-outlet>
+
+Explanation
+
+The <router-outlet> inside AdminComponent is where the child components will be displayed.
+
+Step 4: Import Router Directives
+
+admin.ts
+
+import { Component } from '@angular/core';
+import { RouterLink, RouterOutlet } from '@angular/router';
+
+@Component({
+  selector: 'app-admin',
+  standalone: true,
+  imports: [RouterLink, RouterOutlet],
+  templateUrl: './admin.html'
+})
+export class AdminComponent {
+
+}
+
+Step 5: Child Components
+
+dashboard.html
+
+<h3>Dashboard Component</h3>
+
+<p>Welcome to Admin Dashboard.</p>
+
+users.html
+
+<h3>Users Component</h3>
+
+<p>List of Users.</p>
+
+settings.html
+
+<h3>Settings Component</h3>
+
+<p>Application Settings.</p>
+
+Step 6: Add Parent Route Link
+
+app.html
+
+<h1>Angular Routing Demo</h1>
+
+<nav>
+    <a routerLink="/admin">Admin</a>
+</nav>
+
+<hr>
+
+<router-outlet></router-outlet>
+
+Step 7: Add RouterLink in app.ts
+-------------------------------
+import { Component, signal } from '@angular/core';
+import { RouterLink, RouterOutlet } from '@angular/router';
+
+@Component({
+  selector: 'app-root',
+  imports: [RouterOutlet,RouterLink],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App {
+  protected readonly title = signal('child-routes-examples');
+}
+
+
+####################
+🔐 Angular Routing Guards
+####################
+Routing Guards are used to protect routes in Angular.
+
+👉 They decide Who can enter a page
+
+1. CanActivate - Allow/deny access to a route
+
+🔥 1. CanActivate Guard (Most Important)
+
+👉 Used for authentication (login protection)
+
+Step 1: Create Guard
+ng generate guard auth
+
+Step 2: Guard Code
+auth.guard.ts
+
+import { CanActivateFn } from '@angular/router';
+
+export const authGuard: CanActivateFn = (route, state) => {
+
+  const isLoggedIn = false; // simulate login
+
+  if (isLoggedIn) {
+    return true;
+  } else {
+    alert('Access Denied! Please login first');
+    return false;
+  }
+};
+
+Step 3: Apply Guard to Route
+app.routes.ts
+
+import { Routes } from '@angular/router';
+
+import { AdminComponent } from './admin/admin';
+import { DashboardComponent } from './dashboard/dashboard';
+import { UsersComponent } from './users/users';
+import { SettingsComponent } from './settings/settings';
+import { authGuard } from './auth-guard';
+
+export const routes: Routes = [
+
+  {
+    // path: 'admin',
+    // component: AdminComponent,
+    
+    path: 'admin',
+    component: AdminComponent,
+    canActivate: [authGuard],
+  
+
+    children: [
+
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+
+      {
+        path: 'dashboard',
+        component: DashboardComponent
+      },
+
+      {
+        path: 'users',
+        component: UsersComponent
+      },
+
+      {
+        path: 'settings',
+        component: SettingsComponent
+      }
+
+    ]
+  }
+
+];
+
+Note: const isLoggedIn = !!localStorage.getItem('token');
+
+######################################
+CanDeactivate Guard (Prevent Leaving Page)
+
+👉 Used when user has unsaved data
+######################################
 
