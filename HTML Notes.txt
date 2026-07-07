@@ -8870,7 +8870,7 @@ export class CreatePostComponent {
   }
 }
 
-PROJECT LAB TASK 10 - Creating Service layer (Keep all the logic inside service layer) + slug (SEO friendly url)
+PROJECT LAB TASK 10 - Creating Service layer (Keep all the logic inside service layer)
 ---------------------
 
 Step 1: Create Services folder inside pages
@@ -8926,14 +8926,25 @@ import { BlogpostsService } from '../blogposts.service';
 
 export class CreatePostComponent {
 
-  private postService = Inject(BlogpostsService);
+  private postService = inject(BlogpostsService);
 
- createPostForm = new FormGroup(
-    {
-      title: new FormControl('',  [Validators.required, Validators.minLength(5),Validators.maxLength(20) ]),
-      content: new FormControl('', [Validators.required, Validators.minLength(20)])
-    }
-  ); 
+ createPostForm = new FormGroup({
+  title: new FormControl('', {
+    nonNullable: true,
+    validators: [
+      Validators.required,
+      Validators.minLength(5),
+      Validators.maxLength(20)
+    ]
+  }),
+  content: new FormControl('', {
+    nonNullable: true,
+    validators: [
+      Validators.required,
+      Validators.minLength(20)
+    ]
+  })
+});
 
   createPost() {
     if (this.createPostForm.invalid) {
@@ -8941,11 +8952,63 @@ export class CreatePostComponent {
     return;
     }
 
-    this.postService.createBlogPost(this.createPostForm.value.title, this.createPostForm.value.content)
+    this.postService.createBlogPost(this.createPostForm.getRawValue().title , this.createPostForm.getRawValue().content)
     this.createPostForm.reset();
   }
 }
 
 
 
+PROJECT LAB TASK 11 - slug (SEO friendly url)
+---------------------
+
+Step 1: create a folder call as helper / utility - blogposts-helper.ts
+
+export class BlogPostHelper{
+    static createSlug(title:string):string{
+      const slug = title
+      .toLowerCase()
+      .trim()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+
+    const randomNumber = Math.floor(1000 + Math.random() * 9000);
+
+    return `${slug}-${randomNumber}`;
+  }
+}
+
+Step 2: update blogposts.service.ts  
+
+import { inject, Injectable } from '@angular/core';
+import { doc, Firestore, setDoc } from '@angular/fire/firestore';
+import { BlogPostHelper } from '../../core/helper/blogpost-helper';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class BlogpostsService {
+  private fireStore = inject(Firestore);
+
+  constructor() { }
+
+  createBlogPost(title: string, content: string) {
+    const postDocumentReference = doc(this.fireStore, 'blog-posts', BlogPostHelper.createSlug(title))
+
+    //Step 3
+    setDoc(postDocumentReference, {
+      title: title,
+      content: content,
+      publishedOn: new Date(),
+    })
+
+  }
+}
+
+PROJECT LAB TASK 12 - Upload Image
+------------------------------------
 
