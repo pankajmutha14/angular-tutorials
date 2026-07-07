@@ -8186,6 +8186,766 @@ Note: const isLoggedIn = !!localStorage.getItem('token');
 ######################################
 CanDeactivate Guard (Prevent Leaving Page)
 
-👉 Used when user has unsaved data
+A CanDeactivate guard runs when the user tries to navigate away from a component route.
+
+It can:
+
+Allow navigation
+Block navigation
+Ask for confirmation (“Do you really want to leave?”)
 ######################################
+
+
+
+######################
+Final Project - Use Angular 18 for firebase compatibility
+####################
+
+PROJECT LAB TASK 1
+------------------
+
+Step 1: Create angular project
+
+ng new dev-pulse
+
+Step 2: Install TwailwindCss
+
+https://tailwindcss.com/docs/installation/framework-guides/angular
+
+
+PROJECT LAB TASK 2
+------------------
+
+Project Structure
+-----------------
+project-name
+│
+├── public
+│   ├── assets
+│   └── favicon.ico
+│
+├── src
+│   └── app
+│       ├── core
+│       ├── features
+│       └── shared
+│
+├── angular.json
+├── package.json
+├── tsconfig.json
+└── README.md
+
+Step 1:
+Create core, features, shared folders
+
+Step 2: Create navbar component inside core component
+ng g c navbar
+
+Step 3: navbar.html
+------------------------
+<nav class="bg-blue-600 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex items-center h-16">
+
+            <!-- Logo -->
+            <div class="text-2xl font-bold">
+                <a>
+                    <img src="assets/images/logo.jpg" width="40" height="40" />
+                </a>
+            </div>
+
+            <div class="hidden md:flex items-center ml-auto">
+
+                <a href="#" class="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition duration-300">
+                    Create Post
+                </a>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</nav>
+Output
+
+Step 4: Add selector tag inside app.html
+-------------------------------------------
+<app-navbar></app-navbar>
+
+Note: you are importing this inside app.ts
+
+PROJECT LAB TASK 3 - Create Post Component
+------------------
+
+Step 1: Create Folder Structure for pages - features/post/pages/
+
+Step 2: Create component  - ng g c create-post
+
+Step 3: Update app.routes.ts
+
+import { createComponent } from '@angular/core';
+import { Routes } from '@angular/router';
+import { CreatePost } from './features/post/pages/create-post/create-post';
+
+export const routes: Routes = [
+    {
+        path:'create-post',
+       component:CreatePost
+    },
+];
+
+
+Step 4: Update app.config.ts
+import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { provideRouter } from '@angular/router';
+
+import { routes } from './app.routes';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideBrowserGlobalErrorListeners(),
+    provideRouter(routes)
+  ]
+};
+
+
+Step 5: Update main.ts
+----------------------
+import { bootstrapApplication } from '@angular/platform-browser';
+import { appConfig } from './app/app.config';
+import { App } from './app/app';
+
+bootstrapApplication(App, appConfig)
+  .catch((err) => console.error(err));
+
+
+Step 6: navbar.html add 
+<nav class="bg-blue-600 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex items-center h-16">
+
+            <!-- Logo -->
+            <div class="text-2xl font-bold">
+                <a>
+                    <img src="assets/images/logo.jpg" width="40" height="40" />
+                </a>
+            </div>
+
+            <div class="hidden md:flex items-center ml-auto">
+
+                <a routerLink="create-post" class="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition duration-300">
+                    Create Post
+                </a>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</nav>
+Output
+
+Step 7: Import RouterLink navbar.ts
+import { Component } from '@angular/core';
+import { RouterLink } from "@angular/router";
+
+@Component({
+  selector: 'app-navbar',
+  imports: [RouterLink],
+  templateUrl: './navbar.html',
+  styleUrl: './navbar.css',
+})
+export class Navbar {}
+
+
+PROJECT LAB TASK 4 - Create Post Component fields like title and content
+------------------
+
+<div class="max-w-3xl mx-auto mt-10 bg-white shadow-lg rounded-xl p-8">
+
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">
+        Create New Post
+    </h2>
+
+    <!-- Title -->
+    <div class="mb-5">
+        <label class="block text-gray-700 font-semibold mb-2">
+            Title
+        </label>
+
+        <input
+            type="text"
+            placeholder="Enter post title"
+            class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+    </div>
+
+    <!-- Content -->
+    <div class="mb-6">
+        <label class="block text-gray-700 font-semibold mb-2">
+            Content
+        </label>
+
+        <textarea
+            rows="8"
+            placeholder="Write your post content..."
+            class="w-full border border-gray-300 rounded-lg px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+    </div>
+
+    <!-- Buttons -->
+    <div class="flex justify-end gap-4">
+
+        <button
+            class="px-5 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
+            Cancel
+        </button>
+
+        <button
+            class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+            Publish Post
+        </button>
+
+    </div>
+
+</div>
+
+
+PROJECT LAB TASK 5 - Create Post Component reactive forms with validation
+------------------
+
+Step 1:
+
+import { Component } from '@angular/core';
+import {
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+  FormControl
+} from '@angular/forms';
+
+@Component({
+  selector: 'app-create-post',
+  imports: [ReactiveFormsModule],
+  templateUrl: './create-post.html',
+  styleUrl: './create-post.css',
+  standalone:true
+})
+export class CreatePost {
+
+
+  createPostForm = new FormGroup(
+    {
+      title: new FormControl('',  [Validators.required, Validators.minLength(5),Validators.maxLength(20) ]),
+      content: new FormControl('', [Validators.required, Validators.minLength(20)])
+    }
+  ); 
+
+  createPost() {
+    if (this.createPostForm.invalid) {
+    this.createPostForm.markAllAsTouched();
+    return;
+  }
+
+    console.log(this.createPostForm.value.title);
+    console.log(this.createPostForm.value.content);
+
+    this.createPostForm.reset();
+  }
+}
+
+
+Step 2:
+<div class="max-w-3xl mx-auto mt-10 bg-white shadow-lg rounded-xl p-8">
+
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">
+        Create New Post
+    </h2>
+
+
+    <form [formGroup]="createPostForm" (ngSubmit)="createPost()">
+        <!-- Title -->
+        <div class="mb-5">
+            <label class="block text-gray-700 font-semibold mb-2">
+                Title
+            </label>
+
+            <input type="text" placeholder="Enter post title"
+                class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                formControlName="title">
+        </div>
+        @if (createPostForm.get('title')?.touched &&
+        createPostForm.get('title')?.errors) {
+
+        <div class="mt-2 text-red-600 text-sm">
+
+            @if (createPostForm.get('title')?.hasError('required')) {
+            <p>Title is required.</p>
+            }
+
+            @if (createPostForm.get('title')?.hasError('minlength')) {
+            <p>Title must be at least 5 characters.</p>
+            }
+
+            @if (createPostForm.get('title')?.hasError('maxlength')) {
+            <p>Title cannot exceed 20 characters.</p>
+            }
+
+        </div>
+
+        }
+
+        <!-- Content -->
+        <div class="mb-6">
+            <label class="block text-gray-700 font-semibold mb-2">
+                Content
+            </label>
+
+            <textarea rows="8" placeholder="Write your post content..."
+                class="w-full border border-gray-300 rounded-lg px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                formControlName="content"></textarea>
+        </div>
+        @if (createPostForm.get('content')?.touched &&
+        createPostForm.get('content')?.errors) {
+
+        <div class="mt-2 text-red-600 text-sm">
+
+            @if (createPostForm.get('content')?.hasError('required')) {
+            <p>Content is required.</p>
+            }
+
+            @if (createPostForm.get('content')?.hasError('minlength')) {
+            <p>Content must be at least 20 characters.</p>
+            }
+
+        </div>
+
+        }
+
+        <!-- Buttons -->
+        <div class="flex justify-end gap-4">
+
+            <button class="px-5 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
+                Cancel
+            </button>
+
+            <button class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                Publish Post
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+PROJECT LAB TASK 6 - Environment
+------------------
+
+What are Environments?
+
+Environments allow you to use different configuration values for different stages of your application, such as:
+
+Development
+Testing
+Staging
+Production
+
+For example, your development app may use a local API, while your production app uses a live API.
+
+| Environment | API URL                            |
+| ----------- | ---------------------------------- |
+| Development | `http://localhost:3000/api`        |
+| Testing     | `https://test-api.example.com/api` |
+| Production  | `https://api.example.com/api`      |
+
+Step 1: generate environments
+
+ng g environments
+
+
+Step 2: 
+Add in environment.ts
+-------------------
+export const environment = {
+    prod:true
+};
+
+
+add in environment.development.ts
+-----------------------------------
+export const environment = {
+    prod:false
+};
+
+
+Step 3: Update app.ts file
+
+import { Component, signal } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { Navbar } from "./core/component/navbar/navbar";
+import { environment } from '../environments/environment';
+
+@Component({
+  selector: 'app-root',
+  imports: [RouterOutlet, Navbar],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App {
+  isProd= environment.prod
+}
+
+
+Step 4: add the following in app.html
+
+<app-navbar></app-navbar>
+
+@if(isProd===false){
+    <p class="text-gray-800 text-red-600 bg-gray-800 text-center">Your are in development environment</p>
+}
+
+<router-outlet></router-outlet>
+
+
+Step 5:
+ng serve --open --configuration development
+
+
+PROJECT LAB TASK 7 - Configure FireBase
+------------------
+	
+############################
+Firebase
+#########################
+
+Firebase is Google's Backend-as-a-Service (BaaS) platform that provides backend services such as authentication, databases, storage, hosting, cloud functions, and analytics for web and mobile applications.
+
+
+Step 1: visit: https://firebase.google.com/
+
+Step 2: Click on "go to console"
+
+Step 3: Register the app
+
+Step 4: create database in firebase
+
+Step 5: Installing Angular firebase
+
+What is AngularFire?
+
+AngularFire is the official Angular library for integrating Angular applications with Google Firebase.
+
+It provides Angular-friendly APIs for Firebase services such as:
+
+Authentication
+Cloud Firestore
+Realtime Database
+Cloud Storage
+Cloud Functions
+Cloud Messaging
+
+Command to install: npm install -g firebase-tools@13.11.2
+
+Command to login: firebase login
+
+Command to add firebase to angular: ng add @angular/fire
+
+Step 6: Update environment.ts
+
+export const environment = {
+    prod:true,
+    firebase:{
+
+    }
+};
+
+Step 7: Update environment.development.ts
+export const environment = {
+    prod: false,
+    firebase: {
+        apiKey: "",
+        authDomain: "",
+        projectId: "",
+        storageBucket: "",
+        messagingSenderId: "",
+        appId: ""
+
+    }
+}
+
+Get the above 'firebase' details from project >> Settings >> general tab
+
+Step 8: update app.config.ts file
+-------------------------------------
+import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { provideRouter } from '@angular/router';
+
+import { routes } from './app.routes';
+import { environment } from '../environments/environment';
+
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { provideAuth, getAuth } from '@angular/fire/auth';
+import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { provideStorage, getStorage } from '@angular/fire/storage';
+import { provideHttpClient } from '@angular/common/http';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideHttpClient(),
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideRouter(routes),
+
+    // 🔥 Firebase (ONLY ONCE)
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+
+    // 🔐 Auth
+    provideAuth(() => getAuth()),
+
+    // 📦 Firestore
+    provideFirestore(() => getFirestore()),
+
+    // 📁 Storage
+    provideStorage(() => getStorage())
+  ]
+};
+
+
+
+
+
+PROJECT LAB TASK 8 - Saving data to firestore (addDoc Function)
+------------------
+
+Step 1: create fire Store refence inside create-post.component.ts
+
+Step 2: This will create a collection inside firebase
+const postCollectionReference = collection(this.fireStore,'blog-posts');
+
+
+ Step 3: This will add data to collection
+    addDoc(postCollectionReference,{
+      title:this.createPostForm.value.title,
+      content:this.createPostForm.value.content,
+      publishedOn:new Date()
+      //slug
+      //coverurl
+    })
+
+Code:
+import { Component, inject } from '@angular/core';
+import { addDoc, collection, CollectionReference, Firestore } from '@angular/fire/firestore';
+import {
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+  FormControl
+} from '@angular/forms';
+
+@Component({
+  selector: 'app-create-post',
+  imports: [ReactiveFormsModule],
+  templateUrl: './create-post.component.html',
+  styleUrl: './create-post.component.css',
+  standalone:true
+})
+
+export class CreatePostComponent {
+
+  //Step 1
+ private fireStore = inject(Firestore);
+
+ createPostForm = new FormGroup(
+    {
+      title: new FormControl('',  [Validators.required, Validators.minLength(5),Validators.maxLength(20) ]),
+      content: new FormControl('', [Validators.required, Validators.minLength(20)])
+    }
+  ); 
+
+  createPost() {
+    if (this.createPostForm.invalid) {
+    this.createPostForm.markAllAsTouched();
+    return;
+    }
+
+    //Step 2
+    const postCollectionReference = collection(this.fireStore,'blog-posts');
+
+   // Step 3
+    addDoc(postCollectionReference,{
+      title:this.createPostForm.value.title,
+      content:this.createPostForm.value.content,
+      publishedOn:new Date()
+      //slug
+      //coverurl
+    })
+
+
+
+    this.createPostForm.reset();
+  }
+}
+
+
+PROJECT LAB TASK 9 - Saving data to firestore (setDoc Function)
+------------------
+setDoc - We can give custom id while saving record
+
+ Step 1
+ private fireStore = inject(Firestore);
+
+
+Step 2:
+const postDocumentReference = doc(this.fireStore,'blog-posts','this-is-a-title-123')
+
+Step 3: 
+setDoc(postDocumentReference,{
+     title:this.createPostForm.value.title,
+     content:this.createPostForm.value.content,
+     publishedOn:new Date()
+  })
+
+Code:
+import { Component, inject } from '@angular/core';
+import { addDoc, collection, CollectionReference, doc, Firestore, setDoc } from '@angular/fire/firestore';
+import {
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+  FormControl
+} from '@angular/forms';
+
+@Component({
+  selector: 'app-create-post',
+  imports: [ReactiveFormsModule],
+  templateUrl: './create-post.component.html',
+  styleUrl: './create-post.component.css',
+  standalone:true
+})
+
+export class CreatePostComponent {
+
+  //Step 1
+ private fireStore = inject(Firestore);
+
+ createPostForm = new FormGroup(
+    {
+      title: new FormControl('',  [Validators.required, Validators.minLength(5),Validators.maxLength(20) ]),
+      content: new FormControl('', [Validators.required, Validators.minLength(20)])
+    }
+  ); 
+
+  createPost() {
+    if (this.createPostForm.invalid) {
+    this.createPostForm.markAllAsTouched();
+    return;
+    }
+
+  //   //Step 2
+  //   const postCollectionReference = collection(this.fireStore,'blog-posts');
+
+  //  // Step 3
+  //   addDoc(postCollectionReference,{
+  //     title:this.createPostForm.value.title,
+  //     content:this.createPostForm.value.content,
+  //     publishedOn:new Date()
+  //     //slug
+  //     //coverurl
+  //   })
+
+  //Step 2
+  const postDocumentReference = doc(this.fireStore,'blog-posts','this-is-a-title-123')
+
+  //Step 3
+  setDoc(postDocumentReference,{
+     title:this.createPostForm.value.title,
+     content:this.createPostForm.value.content,
+     publishedOn:new Date()
+  })
+
+    this.createPostForm.reset();
+  }
+}
+
+PROJECT LAB TASK 10 - Creating Service layer (Keep all the logic inside service layer) + slug (SEO friendly url)
+---------------------
+
+Step 1: Create Services folder inside pages
+
+/features/pages/services
+
+ng g s blogposts
+
+Step 2: blogposts.service.ts
+---------------------------
+import { inject, Injectable } from '@angular/core';
+import { doc, Firestore, setDoc } from '@angular/fire/firestore';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class BlogpostsService {
+  private fireStore = inject(Firestore);
+
+  constructor() { }
+
+  createBlogPost(title: string, content: string) {
+    const postDocumentReference = doc(this.fireStore, 'blog-posts', 'this-is-a-title-123')
+
+    //Step 3
+    setDoc(postDocumentReference, {
+      title: title,
+      content: content,
+      publishedOn: new Date()
+    })
+
+  }
+}
+
+Step 3: Update create-post.component.ts
+import { Component, Inject, inject } from '@angular/core';
+import { addDoc, collection, CollectionReference, doc, Firestore, setDoc } from '@angular/fire/firestore';
+import {
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+  FormControl
+} from '@angular/forms';
+import { BlogpostsService } from '../blogposts.service';
+
+@Component({
+  selector: 'app-create-post',
+  imports: [ReactiveFormsModule],
+  templateUrl: './create-post.component.html',
+  styleUrl: './create-post.component.css',
+  standalone:true
+})
+
+export class CreatePostComponent {
+
+  private postService = Inject(BlogpostsService);
+
+ createPostForm = new FormGroup(
+    {
+      title: new FormControl('',  [Validators.required, Validators.minLength(5),Validators.maxLength(20) ]),
+      content: new FormControl('', [Validators.required, Validators.minLength(20)])
+    }
+  ); 
+
+  createPost() {
+    if (this.createPostForm.invalid) {
+    this.createPostForm.markAllAsTouched();
+    return;
+    }
+
+    this.postService.createBlogPost(this.createPostForm.value.title, this.createPostForm.value.content)
+    this.createPostForm.reset();
+  }
+}
+
+
+
 
