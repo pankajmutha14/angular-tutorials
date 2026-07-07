@@ -5273,7 +5273,7 @@ Step 3: add following html to task.html
 
 
 
-Step 4: add to Tasks.ts -- TaskComponent
+Step 4: tasks.html
 <div class="tasks">
     <header>
         {{name}}'s tasks
@@ -5282,6 +5282,20 @@ Step 4: add to Tasks.ts -- TaskComponent
 </div>
 
 <app-task></app-task>
+
+Step 5: update tasks.ts
+import { Component, Input } from '@angular/core';
+import { Task } from "./task/task";
+
+@Component({
+  selector: 'app-tasks',
+  imports: [Task],
+  templateUrl: './tasks.html',
+  styleUrl: './tasks.css',
+})
+export class TasksComponent {
+  @Input({required:true}) name?:string;
+}
 
 #####################
 LAB TASK 31 - Adding new features to Task Component Continuation
