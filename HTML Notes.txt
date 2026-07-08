@@ -5273,7 +5273,7 @@ Step 3: add following html to task.html
 
 
 
-Step 4: tasks.html
+Step 4: add to Tasks.ts -- TaskComponent
 <div class="tasks">
     <header>
         {{name}}'s tasks
@@ -5282,20 +5282,6 @@ Step 4: tasks.html
 </div>
 
 <app-task></app-task>
-
-Step 5: update tasks.ts
-import { Component, Input } from '@angular/core';
-import { Task } from "./task/task";
-
-@Component({
-  selector: 'app-tasks',
-  imports: [Task],
-  templateUrl: './tasks.html',
-  styleUrl: './tasks.css',
-})
-export class TasksComponent {
-  @Input({required:true}) name?:string;
-}
 
 #####################
 LAB TASK 31 - Adding new features to Task Component Continuation
@@ -9025,4 +9011,447 @@ export class BlogpostsService {
 
 PROJECT LAB TASK 12 - Upload Image
 ------------------------------------
+Flow:
+Choose Image
+      │
+      ▼
+Firebase Storage (images/)
+      │
+      ▼
+Download URL
+      │
+      ▼
+Firestore (blog-posts)
+
+Step 1:  modify blogposts.service.ts
+
+import { inject, Injectable } from '@angular/core';
+import { doc, Firestore, setDoc } from '@angular/fire/firestore';
+import { BlogPostHelper } from '../../core/helper/blogpost-helper';
+import {
+  Storage,
+  ref,
+  uploadBytes,
+  getDownloadURL
+} from '@angular/fire/storage';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class BlogpostsService {
+  private fireStore = inject(Firestore);
+
+  //Step 1 : for Image Upload
+  private storage = inject(Storage);
+
+
+  constructor() { }
+
+  //Step 2: add image:File
+  async createBlogPost(title: string, content: string, image: File | null) {
+    const slug=BlogPostHelper.createSlug(title);
+    const postDocumentReference = doc(this.fireStore, 'blog-posts',slug )
+    //Step 3
+    let imageUrl = '';
+
+    //Step 4: Upload image if selected
+    if (image) {
+
+      const storageRef = ref(
+        this.storage,
+        `images/${slug}-${Date.now()}-${image.name}`
+      );
+
+      //Step 5: get image url after upload
+      await uploadBytes(storageRef, image);
+
+      imageUrl = await getDownloadURL(storageRef);
+
+    setDoc(postDocumentReference, {
+      title: title,
+      content: content,
+       imageUrl,
+      publishedOn: new Date(),
+    })
+
+  }
+  }
+}
+
+Step 2: Modify create-post.component.ts
+--------------------------------------
+import { Component, Inject, inject } from '@angular/core';
+import { addDoc, collection, CollectionReference, doc, Firestore, setDoc } from '@angular/fire/firestore';
+import {
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+  FormControl
+} from '@angular/forms';
+import { BlogpostsService } from '../blogposts.service';
+import { MarkdownModule } from 'ngx-markdown';
+
+@Component({
+  selector: 'app-create-post',
+  imports: [ReactiveFormsModule, MarkdownModule],
+  templateUrl: './create-post.component.html',
+  styleUrl: './create-post.component.css',
+  standalone:true
+})
+
+export class CreatePostComponent {
+
+  private postService = inject(BlogpostsService);
+
+  //Create these variables
+   selectedImage: File | null = null;
+   imagePreview: string | ArrayBuffer | null = null;
+  
+
+ createPostForm = new FormGroup({
+  title: new FormControl('', {
+    nonNullable: true,
+    validators: [
+      Validators.required,
+      Validators.minLength(5),
+      Validators.maxLength(20)
+    ]
+  }),
+  content: new FormControl('', {
+    nonNullable: true,
+    validators: [
+      Validators.required,
+      Validators.minLength(20)
+    ]
+  })
+});
+
+ onFileSelected(event: Event) {
+
+    const input = event.target as HTMLInputElement;
+
+    if (!input.files?.length) {
+      return;
+    }
+
+    this.selectedImage = input.files[0];
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+
+      this.imagePreview = reader.result;
+
+    };
+
+    reader.readAsDataURL(this.selectedImage);
+
+  }
+
+  async createPost() {
+   
+    if (this.createPostForm.invalid) {
+    this.createPostForm.markAllAsTouched();
+    return; 
+    }
+
+      this.postService.createBlogPost
+      (
+              this.createPostForm.getRawValue().title , 
+              this.createPostForm.getRawValue().content,
+              this.selectedImage
+      )
+    alert('Post Created Successfully');
+    this.createPostForm.reset();
+    this.selectedImage=null;
+    this.imagePreview=null;
+  }
+}
+
+
+step 3: Modify create-post.component.html
+-----------------------------------
+<div class="max-w-3xl mx-auto mt-10 bg-white shadow-lg rounded-xl p-8">
+
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">
+        Create New Post
+    </h2>
+
+    <form [formGroup]="createPostForm" (ngSubmit)="createPost()">
+
+        <!-- Title -->
+        <div class="mb-5">
+            <label class="block text-gray-700 font-semibold mb-2">
+                Title
+            </label>
+
+            <input
+                type="text"
+                placeholder="Enter post title"
+                formControlName="title"
+                class="w-full border border-gray-300 rounded-lg px-4 py-3
+                       focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        @if (createPostForm.get('title')?.touched &&
+        createPostForm.get('title')?.errors) {
+
+        <div class="mb-5 text-red-600 text-sm">
+
+            @if (createPostForm.get('title')?.hasError('required')) {
+            <p>Title is required.</p>
+            }
+
+            @if (createPostForm.get('title')?.hasError('minlength')) {
+            <p>Title must be at least 5 characters.</p>
+            }
+
+            @if (createPostForm.get('title')?.hasError('maxlength')) {
+            <p>Title cannot exceed 20 characters.</p>
+            }
+
+        </div>
+
+        }
+
+        <!-- Content -->
+
+        <div class="mb-5">
+
+            <label class="block text-gray-700 font-semibold mb-2">
+                Content
+            </label>
+
+            <textarea
+                rows="8"
+                placeholder="Write your post content..."
+                formControlName="content"
+                class="w-full border border-gray-300 rounded-lg px-4 py-3
+                       resize-none
+                       focus:outline-none
+                       focus:ring-2
+                       focus:ring-blue-500">
+            </textarea>
+
+        </div>
+
+        @if (createPostForm.get('content')?.touched &&
+        createPostForm.get('content')?.errors) {
+
+        <div class="mb-5 text-red-600 text-sm">
+
+            @if (createPostForm.get('content')?.hasError('required')) {
+            <p>Content is required.</p>
+            }
+
+            @if (createPostForm.get('content')?.hasError('minlength')) {
+            <p>Content must be at least 20 characters.</p>
+            }
+
+        </div>
+
+        }
+
+        <!-- Featured Image -->
+
+        <div class="mb-6">
+
+            <label class="block text-gray-700 font-semibold mb-2">
+                Featured Image
+            </label>
+
+            <input
+                type="file"
+                accept="image/*"
+                (change)="onFileSelected($event)"
+                class="block w-full text-sm text-gray-700
+                       file:mr-4
+                       file:px-4
+                       file:py-2
+                       file:border-0
+                       file:rounded-lg
+                       file:bg-blue-600
+                       file:text-white
+                       file:cursor-pointer
+                       hover:file:bg-blue-700">
+
+            @if(selectedImage){
+
+            <p class="mt-2 text-sm text-green-600">
+                Selected Image:
+                <strong>{{ selectedImage.name }}</strong>
+            </p>
+
+            }
+
+            @if(imagePreview){
+
+            <div class="mt-4">
+
+                <img
+                    [src]="imagePreview"
+                    alt="Image Preview"
+                    class="w-80 h-52 object-cover rounded-lg border shadow">
+
+            </div>
+
+            }
+
+        </div>
+
+        <!-- Buttons -->
+
+        <div class="flex justify-end gap-4">
+
+            <button
+                type="button"
+                class="px-5 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
+
+                Cancel
+
+            </button>
+
+            <button
+                type="submit"
+                class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+
+                Publish Post
+
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+PROJECT LAB TASK 13- Navar @if loggedIn show CreatePost @else Login and Register Button
+------------------------------------
+
+Step 1: Inside core create serivces folder
+---------------------------------------
+
+/core/services
+
+Step 2: generate user service or auth service
+
+ng g s user
+
+Step 3: For now add dummy code for login inside user.service.ts
+------------------------------------------------------------
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class UserService {
+
+  isLoggedIn=false;
+
+  constructor() { }
+}
+
+Step 4: Inject UserService Inside navbar.component.ts
+--------------------------------------
+import { Component, inject } from '@angular/core';
+import { RouterLink, RouterOutlet } from '@angular/router';
+import { UserService } from '../services/user.service';
+import { LoggedOutFunctionalityComponent } from './logged-out-functionality/logged-out-functionality.component';
+
+@Component({
+  selector: 'app-navbar',
+  standalone: true,
+  imports: [RouterLink, RouterOutlet, LoggedOutFunctionalityComponent],
+  templateUrl: './navbar.component.html',
+  styleUrl: './navbar.component.css'
+})
+export class NavbarComponent {
+  userservice = inject(UserService);
+}
+
+
+Step 5: create Logged-Out-Functionality and Logged-In-Functionality components inside nav bar
+---------------------------------------------------
+
+-> ng g c logged-out-functionality
+-> ng g c logged-in-functionality
+
+Step 5: Add following code inside logged-out-functionality html
+-----------------------
+<div class="hidden md:flex items-center ml-auto gap-4">
+
+    <a href="#"
+        class="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition duration-300">
+        Login
+    </a>
+
+    <a href="#"
+        class="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition duration-300">
+        Register
+    </a>
+
+</div>
+
+Step 6:  Add @if @else inside navbar.component.html
+--------------------------------------
+<nav class="bg-blue-600 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex items-center h-16">
+
+            <!-- Logo -->
+            <div class="text-2xl font-bold">
+                <a>
+                    <img src="assets/images/logo.jpg" width="40" height="40" />
+                </a>
+            </div>
+
+            @if(userservice.isLoggedIn){
+            <div class="hidden md:flex items-center ml-auto">
+
+                <a routerLink="create-post" class="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition duration-300">
+                    Create Post
+                </a>
+
+            </div>
+
+            }@else {
+               <div class="hidden md:flex items-center ml-auto">
+                    <app-logged-out-functionality/>
+               </div>
+            }
+            
+
+        </div>
+
+    </div>
+
+</nav>
+
+<router-outlet></router-outlet>
+
+Step 7: Update @if @else inside navbar for logged-in-functionality
+------------------------
+ @if(userservice.isLoggedIn){
+            <div class="hidden md:flex items-center ml-auto">
+
+                <app-logged-in-functionality></app-logged-in-functionality>
+
+            </div>
+
+            }@else {
+               <div class="hidden md:flex items-center ml-auto">
+                    <app-logged-out-functionality/>
+               </div>
+            }
+
+Step 8: Add the following code inside logged-in-functionality.component.html
+-------------------------------------------
+<a routerLink="create-post" class="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition duration-300">
+    Create Post
+</a>
+
+
+
+
+
 
