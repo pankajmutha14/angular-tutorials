@@ -9450,8 +9450,273 @@ Step 8: Add the following code inside logged-in-functionality.component.html
     Create Post
 </a>
 
+PROJECT LAB TASK 14- create dropdown option for loggedin user
+------------------------------------
+
+<div class="hidden md:flex items-center ml-auto gap-4">
+
+    <!-- Create Post -->
+    <a routerLink="create-post"
+        class="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition duration-300">
+        Create Post
+    </a>
+
+    <!-- User Dropdown -->
+    <div class="relative group">
+
+        <button
+            class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+
+            <span>Pankaj</span>
+
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+            </svg>
+
+
+        </button>
+
+        <!-- Dropdown -->
+        <div
+            class="absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition duration-200">
+
+            <div class="px-4 py-3 border-b">
+                <p class="font-semibold text-gray-800">
+                    Pankaj
+                </p>
+                <p class="text-sm text-gray-500">
+                    pankajemail.com
+                </p>
+            </div>
+
+            <!-- Dashboard -->
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-100">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3 12l9-9 9 9M5.25 10.5V21h13.5V10.5M9 21v-6h6v6" />
+                </svg>
+
+                <span>Dashboard</span>
+            </a>
+
+            <!-- Logout -->
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-100">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6A2.25 2.25 0 0 0 5.25 5.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 15l3-3m0 0-3-3m3 3H9" />
+                </svg>
+
+                <span>Logout</span>
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
 
 
 
+PROJECT LAB TASK 15 - FIX DROPDOWN BUG
+-----------------
+
+Step 1: Update logged-in-functionality.component.ts
+----------------------
+import { Component, inject, signal } from '@angular/core';
+
+@Component({
+  selector: 'app-logged-in-functionality',
+  standalone: true,
+  imports: [],
+  templateUrl: './logged-in-functionality.component.html',
+  styleUrl: './logged-in-functionality.component.css'
+})
+export class LoggedInFunctionalityComponent {
+ 
+  isDropdownOpen = false;
+
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+
+
+}
+
+Step 2: Update HTML Code:
+---------------------
+<div class="hidden md:flex items-center ml-auto gap-4">
+
+    <!-- Create Post -->
+    <a routerLink="create-post"
+        class="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition duration-300">
+        Create Post
+    </a>
+
+    <!-- User Dropdown -->
+    <div class="relative group">
+
+ <!--Add Click here-->
+        <button (click)="toggleDropdown()"
+            class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+
+            <span>Pankaj</span>
+
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+            </svg>
+
+
+        </button>
+
+        <!-- Dropdown -- Add here [class.hidden]>
+        <div class="absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-lg border" [class.hidden]="!isDropdownOpen">
+            <div class="px-4 py-3 border-b">
+                <p class="font-semibold text-gray-800">
+                    Pankaj
+                </p>
+                <p class="text-sm text-gray-500">
+                    pankajemail.com
+                </p>
+            </div>
+
+            <!-- Dashboard -->
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-100">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3 12l9-9 9 9M5.25 10.5V21h13.5V10.5M9 21v-6h6v6" />
+                </svg>
+
+                <span>Dashboard</span>
+            </a>
+
+            <!-- Logout -->
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-100">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6A2.25 2.25 0 0 0 5.25 5.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 15l3-3m0 0-3-3m3 3H9" />
+                </svg>
+
+                <span>Logout</span>
+            </a>
+
+    </div>
+
+</div>
+
+</div>
+
+
+PROJECT LAB TASK 16 - Dashboard
+-----------------
+
+Step 1: Create features/dashboard/pages folder
+
+Step 2: Inside pages create dashboard component
+
+ng g c dashboard
+
+Step 3: dashboard.component.html
+------------------------------------
+<div class="max-w-3xl mx-auto mt-10 bg-white shadow-lg rounded-xl p-8">
+
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">
+        Dashboard
+    </h2>
+</div>
+
+Step 4: Update app.routes.ts
+-----------------------------
+import { Routes } from '@angular/router';
+import { CreatePostComponent } from './features/post/pages/create-post/create-post.component';
+import { DashboardComponent } from './features/dashboard/pages/dashboard/dashboard.component';
+
+export const routes: Routes = [
+  {
+    path: 'create-post',
+    component: CreatePostComponent
+  },
+  {
+    path: 'dash-board',
+    component: DashboardComponent
+  },
+
+];
+
+
+Step 5: logged-in-functionality.component.html
+-----------------------------------------------
+<div class="hidden md:flex items-center ml-auto gap-4">
+
+    <!-- Create Post -->
+    <a routerLink="create-post"
+        class="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition duration-300">
+        Create Post
+    </a>
+
+    <!-- User Dropdown -->
+    <div class="relative group">
+
+        <button (click)="toggleDropdown()"
+            class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+
+            <span>Pankaj</span>
+
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+            </svg>
+
+
+        </button>
+
+        <!-- Dropdown -->
+        <div class="absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-lg border" [class.hidden]="!isDropdownOpen">
+            <div class="px-4 py-3 border-b">
+                <p class="font-semibold text-gray-800">
+                    Pankaj
+                </p>
+                <p class="text-sm text-gray-500">
+                    pankajemail.com
+                </p>
+            </div>
+
+            <!-- Dashboard --> 
+           <!--Labtask 16 update - routerLink is added -->
+            <a [routerLink]="['/dash-board']" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-100" >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3 12l9-9 9 9M5.25 10.5V21h13.5V10.5M9 21v-6h6v6" />
+                </svg>
+
+                <span>Dashboard</span>
+            </a>
+
+            <!-- Logout -->
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-100">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6A2.25 2.25 0 0 0 5.25 5.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 15l3-3m0 0-3-3m3 3H9" />
+                </svg>
+
+                <span>Logout</span>
+            </a>
+
+    </div>
+
+</div>
+
+</div>
 
 
