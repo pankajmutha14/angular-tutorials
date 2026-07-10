@@ -10054,7 +10054,341 @@ Step 4: dashboard.component.html
 
 </div>
 
-PROJECT LAB TASK 21 - Get all the posts
+PROJECT LAB TASK 21 - Get post by id part 1 (edit)
 --------------------------------
+
+Step 1: app.routes.ts
+------------------
+{
+  path: 'edit-post/:id',
+  component: EditPostComponent
+}
+
+Step 2:
+Navigate when the user clicks Edit
+
+In your dashboard component:
+
+import { Router } from '@angular/router';
+
+constructor(private router: Router) {}
+
+editPost(id: string) {
+  this.router.navigate(['/edit-post', id]);
+}
+
+Step 3: Update <button> inside dashboard html
+------------------------------------------
+<button
+    [routerLink]="['/edit-post', post.id]"
+    class="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+    Edit
+</button>
+
+Step 4: Import RouterLink in DashBoard
+---------------------------------
+import { RouterLink } from '@angular/router';
+
+@Component({
+  standalone: true,
+  imports: [RouterLink],
+  ...
+})
+
+Step 5: Read the ID in EditPostComponent
+import { Component, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+
+@Component({
+  selector: 'app-edit-post',
+  standalone: true,
+  imports: [],
+  templateUrl: './edit-post.component.html',
+  styleUrl: './edit-post.component.css'
+})
+export class EditPostComponent {
+
+  private route = inject(ActivatedRoute);
+
+  postId = '';
+
+  ngOnInit() {
+    this.postId = this.route.snapshot.paramMap.get('id')!;
+    console.log(this.postId);
+  }
+
+}
+
+LAB TASK 22 - Edit Part 2:
+-------------------------
+
+Step 1:  Add a method to your service
+
+import { inject, Injectable } from '@angular/core';
+import {
+  Firestore,
+  doc,
+  docData
+} from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
+import { BlogPost } from '../models/blog-post';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class BlogPostService {
+
+  private firestore = inject(Firestore);
+
+  getPostById(id: string): Observable<BlogPost> {
+    const postRef = doc(this.firestore, `blog-posts/${id}`);
+
+    return docData(postRef, {
+      idField: 'id'
+    }) as Observable<BlogPost>;
+  }
+
+}
+
+Step 2:Use it in EditPostComponent
+
+import { Component, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { BlogPostService } from '../services/blog-post.service';
+import { BlogPost } from '../models/blog-post';
+
+@Component({
+  selector: 'app-edit-post',
+  standalone: true,
+  imports: [],
+  templateUrl: './edit-post.component.html',
+  styleUrl: './edit-post.component.css'
+})
+export class EditPostComponent {
+
+  private route = inject(ActivatedRoute);
+  private blogPostService = inject(BlogPostService);
+
+  post?: BlogPost;
+
+  ngOnInit() {
+
+    const postId = this.route.snapshot.paramMap.get('id');
+
+    if (!postId) {
+      return;
+    }
+
+    this.blogPostService.getPostById(postId).subscribe({
+      next: (post) => {
+        this.post = post;
+        console.log(post);
+      },
+      error: (err) => {
+        console.error('Failed to load post', err);
+      }
+    });
+
+  }
+
+}
+
+Step 3: . Display the values in edit page html
+---------------------------------------------
+@if (post) {
+
+    <h2>{{ post.title }}</h2>
+
+    <img
+        [src]="post.imageUrl"
+        [alt]="post.title"
+        class="w-60 rounded">
+
+    <p>{{ post.content }}</p>
+
+}
+
+LAB TASK 23 - Edit Post Continutation:
+
+-----------------------------------------
+Step 1:  Edit blogposts.service.ts
+-----------------------------------
+import { inject, Injectable } from '@angular/core';
+import { collection, collectionData, doc, docData, Firestore, setDoc } from '@angular/fire/firestore';
+
+import {
+  Storage,
+  ref,
+  uploadBytes,
+  getDownloadURL
+} from '@angular/fire/storage';
+import { BlogPostHelper } from '../../../core/helper/blogpost-helper';
+import { Observable } from 'rxjs';
+import { BlogPost } from '../models/blogposts.model';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class BlogpostsService {
+  private fireStore = inject(Firestore);
+
+  //Step 1 : for Image Upload
+  private storage = inject(Storage);
+
+
+  constructor() { }
+
+  //Step 2: add image:File
+  async createBlogPost(title: string, content: string, image: File | null) {
+    const slug=BlogPostHelper.createSlug(title);
+    const postDocumentReference = doc(this.fireStore, 'blog-posts',slug )
+    //Step 3
+    let imageUrl = '';
+
+    //Step 4: Upload image if selected
+    if (image) {
+
+      const storageRef = ref(
+        this.storage,
+        `images/${slug}-${Date.now()}-${image.name}`
+      );
+
+      //Step 5: get image url after upload
+      await uploadBytes(storageRef, image);
+
+      imageUrl = await getDownloadURL(storageRef);
+
+    setDoc(postDocumentReference, {
+      title: title,
+      content: content,
+       imageUrl,
+      publishedOn: new Date(),
+    })
+
+  }
+  }
+
+  getAllPosts(): Observable<BlogPost[]> {
+    const postsRef = collection(this.fireStore, 'blog-posts');
+
+    return collectionData(postsRef, {
+      idField: 'id'
+    }) as Observable<BlogPost[]>;
+  }
+
+   getPostById(id: string): Observable<BlogPost> {
+    const postRef = doc(this.fireStore, `blog-posts/${id}`);
+
+    return docData(postRef, {
+      idField: 'id'
+    }) as Observable<BlogPost>;
+  }
+
+}
+
+Step 2: Update edit-post.component.ts
+-----------------------------------
+import { Component, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { BlogPost } from '../../models/blogposts.model';
+import { BlogpostsService } from '../../services/blogposts.service';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+
+@Component({
+  selector: 'app-edit-post',
+  standalone: true,
+  imports: [ReactiveFormsModule],
+  templateUrl: './edit-post.component.html',
+  styleUrl: './edit-post.component.css'
+})
+export class EditPostComponent {
+
+  private route = inject(ActivatedRoute);
+  private blogPostService = inject(BlogpostsService);
+
+  post?: BlogPost;
+  private fb = inject(FormBuilder);
+
+  form = this.fb.group({
+    title: ['', Validators.required],
+    content: ['', Validators.required]
+  });
+
+  imageUrl = '';
+
+  ngOnInit() {
+
+    const postId = this.route.snapshot.paramMap.get('id');
+
+    if (!postId) {
+      return;
+    }
+
+    this.blogPostService.getPostById(postId).subscribe(post => {
+
+      this.imageUrl = post.imageUrl;
+
+      this.form.patchValue({
+        title: post.title,
+        content: post.content
+      });
+
+    });
+
+  }
+
+}
+
+
+Step 3: edit-post.component.html
+--------------------------------
+<form [formGroup]="form"  class="space-y-6">
+
+    <div>
+        <label class="block mb-2 font-medium">Title</label>
+
+        <input
+            type="text"
+            formControlName="title"
+            class="w-full rounded-lg border p-3">
+    </div>
+
+    <div>
+        <label class="block mb-2 font-medium">Content</label>
+
+        <textarea
+            rows="8"
+            formControlName="content"
+            class="w-full rounded-lg border p-3">
+        </textarea>
+    </div>
+
+    <div class="space-y-4">
+
+    <label class="block font-medium">
+        Current Image
+    </label>
+
+    <img
+        [src]="imageUrl"
+        class="w-60 rounded-lg border">
+
+    <input
+        type="file"
+        accept="image/*"
+        class="block w-full text-sm text-gray-500
+               file:mr-4 file:rounded-lg file:border-0
+               file:bg-blue-600 file:px-4 file:py-2
+               file:text-white hover:file:bg-blue-700">
+
+</div>
+
+    <button
+        type="submit"
+        class="rounded-lg bg-blue-600 px-5 py-2 text-white">
+        Update Post
+    </button>
+
+</form>
 
 
