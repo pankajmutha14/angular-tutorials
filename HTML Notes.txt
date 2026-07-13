@@ -10902,6 +10902,330 @@ async deleteBlogPost(post: BlogPost) {
 }
 
 
+######################################
+Firebase Authentication
+######################################
+
+Project Lab Task 26 - Configure register route
+---------------------------------------------------
+
+Step 1: Enable Authentication sign-in-method
+--------------------------------------
+
+
+Step 2: Inside features create user/pages folder
+--------------------------------------
+
+Step 3: Create a component register inside pages
+---------------------------------------
+
+ ng g c register
+
+Step 4: Configure routes - app.routes.ts
+---------------------------------
+{
+    path:'register',
+    component: RegisterComponent
+}
+
+Step 5: Update logged-out-functionality.component.html
+-----------------------------------------------
+<div class="hidden md:flex items-center ml-auto gap-4">
+
+    <a href="#"
+        class="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition duration-300">
+        Login
+    </a>
+
+    <a [routerLink]="['/register']"
+        class="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition duration-300">
+        Register
+    </a>
+
+</div>
+
+
+Project Lab Task 27 - Develop register functionality
+-----------------------------------------------------
+
+Step 1: register.component.html
+--------------------------------
+<div class="max-w-3xl mx-auto mt-10 bg-white shadow-lg rounded-xl p-8">
+
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">
+        Create Account
+    </h2>
+
+    <form
+        [formGroup]="registerForm"
+        (ngSubmit)="register()">
+
+        <!-- Email -->
+
+        <div class="mb-5">
+
+            <label class="block text-gray-700 font-semibold mb-2">
+                Email Address
+            </label>
+
+            <input
+                type="email"
+                formControlName="email"
+                placeholder="Enter your email"
+                class="w-full border border-gray-300 rounded-lg px-4 py-3
+                       focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+        </div>
+
+        @if(registerForm.get('email')?.touched &&
+        registerForm.get('email')?.errors){
+
+        <div class="mb-5 text-red-600 text-sm">
+
+            @if(registerForm.get('email')?.hasError('required')){
+            <p>Email is required.</p>
+            }
+
+            @if(registerForm.get('email')?.hasError('email')){
+            <p>Enter a valid email address.</p>
+            }
+
+        </div>
+
+        }
+
+        <!-- Password -->
+
+        <div class="mb-5">
+
+            <label class="block text-gray-700 font-semibold mb-2">
+                Password
+            </label>
+
+            <input
+                type="password"
+                formControlName="password"
+                placeholder="Enter password"
+                class="w-full border border-gray-300 rounded-lg px-4 py-3
+                       focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+        </div>
+
+        @if(registerForm.get('password')?.touched &&
+        registerForm.get('password')?.errors){
+
+        <div class="mb-5 text-red-600 text-sm">
+
+            @if(registerForm.get('password')?.hasError('required')){
+            <p>Password is required.</p>
+            }
+
+            @if(registerForm.get('password')?.hasError('minlength')){
+            <p>Password must be at least 6 characters.</p>
+            }
+
+        </div>
+
+        }
+
+        <!-- Confirm Password -->
+
+        <div class="mb-5">
+
+            <label class="block text-gray-700 font-semibold mb-2">
+                Confirm Password
+            </label>
+
+            <input
+                type="password"
+                formControlName="confirmPassword"
+                placeholder="Confirm password"
+                class="w-full border border-gray-300 rounded-lg px-4 py-3
+                       focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+        </div>
+
+        @if(registerForm.get('confirmPassword')?.touched &&
+        registerForm.get('confirmPassword')?.hasError('required')){
+
+        <div class="mb-5 text-red-600 text-sm">
+            <p>Confirm Password is required.</p>
+        </div>
+
+        }
+
+        @if(registerForm.hasError('passwordMismatch')
+        && registerForm.get('confirmPassword')?.touched){
+
+        <div class="mb-5 text-red-600 text-sm">
+            <p>Passwords do not match.</p>
+        </div>
+
+        }
+
+        <div class="flex justify-end gap-4">
+
+            <button
+                type="reset"
+                class="px-5 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
+
+                Cancel
+
+            </button>
+
+            <button
+                type="submit"
+                class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+
+                Register
+
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+Step 2: register.component.ts
+----------------------------
+
+import { Component, inject } from '@angular/core';
+import {
+  FormBuilder,
+  ReactiveFormsModule,
+  Validators,
+  AbstractControl,
+  ValidationErrors
+} from '@angular/forms';
+import { Router } from '@angular/router';
+import { UserService } from '../../service/user.service';
+
+
+@Component({
+  selector: 'app-register',
+  standalone: true,
+  imports: [ReactiveFormsModule],
+  templateUrl: './register.component.html',
+  styleUrl: './register.component.css'
+})
+export class RegisterComponent {
+
+  private fb = inject(FormBuilder);
+  private userService = inject(UserService);
+  private router = inject(Router);
+
+  registerForm = this.fb.group(
+    {
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.email
+        ]
+      ],
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(6)
+        ]
+      ],
+      confirmPassword: [
+        '',
+        Validators.required
+      ]
+    },
+    {
+      validators: this.passwordMatchValidator
+    }
+  );
+
+  passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+
+    const password = control.get('password')?.value;
+    const confirmPassword = control.get('confirmPassword')?.value;
+
+    return password === confirmPassword
+      ? null
+      : { passwordMismatch: true };
+
+  }
+
+  async register() {
+
+    if (this.registerForm.invalid) {
+      this.registerForm.markAllAsTouched();
+      return;
+    }
+
+    try {
+
+      await this.userService.signUp(
+        this.registerForm.value.email!,
+        this.registerForm.value.password!
+      );
+
+      alert('Registration successful.');
+
+      this.router.navigate(['/login']);
+
+    } catch (error: any) {
+
+      alert(error.message);
+
+    }
+
+  }
+
+}
+
+Step 3: user.service.ts
+-------------------------
+import { Injectable, inject } from '@angular/core';
+import {
+  Auth,
+  createUserWithEmailAndPassword
+} from '@angular/fire/auth';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class UserService {
+
+  private auth = inject(Auth);
+
+  signUp(email: string, password: string) {
+    return createUserWithEmailAndPassword(
+      this.auth,
+      email,
+      password
+    );
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
