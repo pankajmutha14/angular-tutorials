@@ -10208,7 +10208,7 @@ Step 3: . Display the values in edit page html
 
 }
 
-LAB TASK 23 - Edit Post Continutation:
+LAB TASK 23 - Edit Post Continuation:
 
 -----------------------------------------
 Step 1:  Edit blogposts.service.ts
@@ -10390,5 +10390,524 @@ Step 3: edit-post.component.html
     </button>
 
 </form>
+
+
+LAB TASK 24 - Edit Post Continuation:
+
+-----------------------------------------
+
+Step 1: edit-post.component.html
+---------------------------------
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
+
+    <div>
+        <label class="block mb-2 font-medium">Title</label>
+        <input
+            type="text"
+            formControlName="title"
+            class="w-full rounded-lg border p-3">
+    </div>
+
+    <div>
+        <label class="block mb-2 font-medium">Content</label>
+        <textarea
+            rows="8"
+            formControlName="content"
+            class="w-full rounded-lg border p-3">
+        </textarea>
+    </div>
+
+    <div class="space-y-4">
+        <label class="block font-medium">
+            Current Image
+        </label>
+
+        <img
+            [src]="imageUrl"
+            class="w-60 rounded-lg border">
+
+        <input
+            type="file"
+            accept="image/*"
+            (change)="onFileSelected($event)"
+            class="block w-full text-sm text-gray-500
+                   file:mr-4 file:rounded-lg file:border-0
+                   file:bg-blue-600 file:px-4 file:py-2
+                   file:text-white hover:file:bg-blue-700">
+    </div>
+
+    <button
+        type="submit"
+        [disabled]="form.invalid"
+        class="rounded-lg bg-blue-600 px-5 py-2 text-white">
+        Update Post
+    </button>
+
+</form>
+
+Step 2: Update edit-post.component.ts
+-------------------------------------
+import { Component, inject } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { BlogpostsService } from '../../services/blogposts.service';
+
+@Component({
+  selector: 'app-edit-post',
+  standalone: true,
+  imports: [ReactiveFormsModule],
+  templateUrl: './edit-post.component.html',
+  styleUrl: './edit-post.component.css'
+})
+export class EditPostComponent {
+
+  private route = inject(ActivatedRoute);
+  private blogPostService = inject(BlogpostsService);
+  private router = inject(Router);
+
+  private postId = '';
+
+  imageUrl = '';
+
+  selectedImage: File | null = null;
+
+  private fb = inject(FormBuilder);
+
+  form = this.fb.group({
+    title: ['', Validators.required],
+    content: ['', Validators.required]
+  });
+
+  ngOnInit() {
+
+    const id = this.route.snapshot.paramMap.get('id');
+
+    if (!id) return;
+
+    this.postId = id;
+
+    this.blogPostService.getPostById(id).subscribe(post => {
+
+      this.imageUrl = post.imageUrl;
+
+      this.form.patchValue({
+        title: post.title,
+        content: post.content
+      });
+
+    });
+
+  }
+
+  onFileSelected(event: Event) {
+
+    const input = event.target as HTMLInputElement;
+
+    if (input.files?.length) {
+      this.selectedImage = input.files[0];
+    }
+
+  }
+
+  async onSubmit() {
+
+    if (this.form.invalid) return;
+
+    await this.blogPostService.updateBlogPost(
+      this.postId,
+      this.form.value.title!,
+      this.form.value.content!,
+      this.selectedImage,
+      this.imageUrl
+    );
+
+    this.router.navigate(['/']);
+
+  }
+
+}
+
+Step 3: update blogposts.service.ts
+----------------------------------
+import { inject, Injectable } from '@angular/core';
+import { collection, collectionData, doc, docData, Firestore, setDoc, updateDoc } from '@angular/fire/firestore';
+
+import {
+  Storage,
+  ref,
+  uploadBytes,
+  getDownloadURL
+} from '@angular/fire/storage';
+import { BlogPostHelper } from '../../../core/helper/blogpost-helper';
+import { Observable } from 'rxjs';
+import { BlogPost } from '../models/blogposts.model';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class BlogpostsService {
+ 
+  private fireStore = inject(Firestore);
+
+  //Step 1 : for Image Upload
+  private storage = inject(Storage);
+
+
+  constructor() { }
+
+  //Step 2: add image:File
+  async createBlogPost(title: string, content: string, image: File | null) {
+    const slug=BlogPostHelper.createSlug(title);
+    const postDocumentReference = doc(this.fireStore, 'blog-posts',slug )
+    //Step 3
+    let imageUrl = '';
+
+    //Step 4: Upload image if selected
+    if (image) {
+
+      const storageRef = ref(
+        this.storage,
+        `images/${slug}-${Date.now()}-${image.name}`
+      );
+
+      //Step 5: get image url after upload
+      await uploadBytes(storageRef, image);
+
+      imageUrl = await getDownloadURL(storageRef);
+
+    setDoc(postDocumentReference, {
+      title: title,
+      content: content,
+       imageUrl,
+      publishedOn: new Date(),
+    })
+
+  }
+  }
+
+  getAllPosts(): Observable<BlogPost[]> {
+    const postsRef = collection(this.fireStore, 'blog-posts');
+
+    return collectionData(postsRef, {
+      idField: 'id'
+    }) as Observable<BlogPost[]>;
+  }
+
+   getPostById(id: string): Observable<BlogPost> {
+    const postRef = doc(this.fireStore, `blog-posts/${id}`);
+
+    return docData(postRef, {
+      idField: 'id'
+    }) as Observable<BlogPost>;
+  }
+
+  async updateBlogPost(
+  id: string,
+  title: string,
+  content: string,
+  image: File | null,
+  currentImageUrl: string
+) {
+
+  const postRef = doc(this.fireStore, 'blog-posts', id);
+
+  let imageUrl = currentImageUrl;
+
+  if (image) {
+
+    const storageRef = ref(
+      this.storage,
+      `images/${id}-${Date.now()}-${image.name}`
+    );
+
+    await uploadBytes(storageRef, image);
+
+    imageUrl = await getDownloadURL(storageRef);
+
+  }
+
+  await updateDoc(postRef, {
+    title,
+    content,
+    imageUrl
+  });
+
+}
+}
+
+
+LAB TASK 25 - delete post
+
+-----------------------------------------
+
+Step 1: dashboard.component.html
+--------------------------------
+
+<div class="max-w-3xl mx-auto mt-10 bg-white shadow-lg rounded-xl p-8">
+
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">
+        Dashboard
+    </h2>
+
+    <app-dashboard-statistics [value]="posts.length" [labelDescription]="'Posts'">
+    </app-dashboard-statistics>
+
+    <div class="mt-8">
+
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+            Published Posts
+        </h3>
+
+        @if (posts.length > 0) {
+
+        <div class="space-y-4">
+
+            @for (post of posts; track post.id) {
+
+            <div
+                class="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-5 hover:bg-gray-100">
+
+                <div class="flex gap-4 items-center">
+
+                    <img [src]="post.imageUrl" [alt]="post.title" class="w-20 h-20 rounded-lg object-cover">
+
+                    <div>
+
+                        <h4 class="text-lg font-semibold text-gray-900">
+                            {{ post.title }}
+                        </h4>
+
+                        <p class="text-sm text-gray-500 mt-1">
+                            Published:
+                            {{ post.publishedOn }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <button [routerLink]="['/edit-post', post.id]"
+                    class="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+                    Edit
+                </button>
+
+                <button (click)="deletePost(post)" class="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700">
+                    Delete
+                </button>
+
+            </div>
+
+            }
+
+        </div>
+
+        } @else {
+
+        <div class="text-center py-10 text-gray-500">
+            No published posts yet.
+        </div>
+
+        }
+
+    </div>
+
+</div>
+
+
+Step 2: Update dashboard.component.ts
+--------------------------------------
+import { Component, inject, OnInit } from '@angular/core';
+import { DashboardStatisticsComponent } from "../components/dashboard-statistics/dashboard-statistics.component";
+import { BlogPost } from '../../../post/models/blogposts.model';
+import { BlogpostsService } from '../../../post/services/blogposts.service';
+import { DatePipe } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
+
+@Component({
+  selector: 'app-dashboard',
+  standalone: true,
+  imports: [DashboardStatisticsComponent, DatePipe, RouterLink],
+  templateUrl: './dashboard.component.html',
+  styleUrl: './dashboard.component.css'
+})
+export class DashboardComponent {
+
+  private blogPostService = inject(BlogpostsService);
+
+  posts: BlogPost[] = [];
+
+  constructor(private router: Router) { }
+
+  editPost(id: string) {
+    this.router.navigate(['/edit-post', id]);
+  }
+
+  ngOnInit(): void {
+    this.blogPostService.getAllPosts().subscribe(posts => {
+      this.posts = posts;
+    });
+  }
+
+  async deletePost(post: BlogPost) {
+
+  const confirmDelete = confirm(
+    `Are you sure you want to delete "${post.title}"?`
+  );
+
+  if (!confirmDelete) {
+    return;
+  }
+
+  await this.blogPostService.deleteBlogPost(post);
+
+}
+
+}
+
+
+Step 3: blogposts.service.ts
+----------------------------
+import { inject, Injectable } from '@angular/core';
+import { collection, collectionData, deleteDoc, doc, docData, Firestore, setDoc, updateDoc } from '@angular/fire/firestore';
+
+import {
+  Storage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject
+} from '@angular/fire/storage';
+import { BlogPostHelper } from '../../../core/helper/blogpost-helper';
+import { Observable } from 'rxjs';
+import { BlogPost } from '../models/blogposts.model';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class BlogpostsService {
+ 
+  private fireStore = inject(Firestore);
+
+  //Step 1 : for Image Upload
+  private storage = inject(Storage);
+
+
+  constructor() { }
+
+  //Step 2: add image:File
+  async createBlogPost(title: string, content: string, image: File | null) {
+    const slug=BlogPostHelper.createSlug(title);
+    const postDocumentReference = doc(this.fireStore, 'blog-posts',slug )
+    //Step 3
+    let imageUrl = '';
+
+    //Step 4: Upload image if selected
+    if (image) {
+
+      const storageRef = ref(
+        this.storage,
+        `images/${slug}-${Date.now()}-${image.name}`
+      );
+
+      //Step 5: get image url after upload
+      await uploadBytes(storageRef, image);
+
+      imageUrl = await getDownloadURL(storageRef);
+
+    setDoc(postDocumentReference, {
+      title: title,
+      content: content,
+       imageUrl,
+      publishedOn: new Date(),
+    })
+
+  }
+  }
+
+  getAllPosts(): Observable<BlogPost[]> {
+    const postsRef = collection(this.fireStore, 'blog-posts');
+
+    return collectionData(postsRef, {
+      idField: 'id'
+    }) as Observable<BlogPost[]>;
+  }
+
+   getPostById(id: string): Observable<BlogPost> {
+    const postRef = doc(this.fireStore, `blog-posts/${id}`);
+
+    return docData(postRef, {
+      idField: 'id'
+    }) as Observable<BlogPost>;
+  }
+
+  async updateBlogPost(
+  id: string,
+  title: string,
+  content: string,
+  image: File | null,
+  currentImageUrl: string
+) {
+
+  const postRef = doc(this.fireStore, 'blog-posts', id);
+
+  let imageUrl = currentImageUrl;
+
+  if (image) {
+
+    const storageRef = ref(
+      this.storage,
+      `images/${id}-${Date.now()}-${image.name}`
+    );
+
+    await uploadBytes(storageRef, image);
+
+    imageUrl = await getDownloadURL(storageRef);
+
+  }
+
+  await updateDoc(postRef, {
+    title,
+    content,
+    imageUrl
+  });
+
+}
+
+async deleteBlogPost(post: BlogPost) {
+
+  // Delete Firestore document
+  const postRef = doc(this.fireStore, 'blog-posts', post.id!);
+
+  await deleteDoc(postRef);
+
+  // Delete image from Firebase Storage
+  if (post.imageUrl) {
+
+    try {
+
+      const imageRef = ref(this.storage, post.imageUrl);
+
+      await deleteObject(imageRef);
+
+    } catch (error) {
+
+      console.error('Failed to delete image:', error);
+
+    }
+
+  }
+
+}
+
+}
+
+
+
+
+
+
+
+
+
 
 
