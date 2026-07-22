@@ -11255,7 +11255,57 @@ API endpoints:
 
 http://localhost:3000/employees
 
-
+Project Structure for Angular commonly followed by developers in Industry
+------------------------------
+src/
+│
+├── app/
+│
+│   ├── core/
+│   │   ├── guards/
+│   │   │   ├── auth.guard.ts
+│   │   │   └── admin.guard.ts
+│   │   │
+│   │   ├── interceptors/
+│   │   │   └── auth.interceptor.ts
+│   │   │
+│   │   ├── services/
+│   │   │   ├── auth.service.ts
+│   │   │   └── token.service.ts
+│   │   │
+│   │   └── models/
+│   │       └── login-response.ts
+│   │
+│   ├── shared/
+│   │   ├── components/
+│   │   │   ├── navbar/
+│   │   │   ├── footer/
+│   │   │   └── sidebar/
+│   │   │
+│   │
+│   ├── features/
+│   │   └── employee/
+│   │       ├── pages/
+│   │       │   ├── employee-list/
+│   │       │   ├── create-employee/
+│   │       │   ├── update-employee/
+│   │       │   └── employee-details/
+│   │       │
+│   │       ├── services/
+│   │       │   └── employee.service.ts
+│   │       │
+│   │       ├── models/
+│   │       │   └── employee.ts
+│   │       │
+│   │
+│   ├── app-routing.module.ts
+│   ├── app.component.ts
+│   ├── app.component.html
+│   └── app.module.ts
+│
+├── assets/
+├── environments/
+└── package.json
 
 
 
