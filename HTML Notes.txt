@@ -11206,10 +11206,54 @@ export class UserService {
 }
 
 
+Project Lab Task 28 - Configure Login routes
+-----------------------------------------------------
+
+Step 1: app.routes.ts
 
 
 
+##################################
 
+Backend API Integration
+###################################
+
+Step 1: install JSON SERVER
+npm install -g json-server
+
+Step 2: create db.json file and paste:
+
+{
+  "employees": [
+    {
+      "id": "1",
+      "designation": "Developer",
+      "salary": 100000,
+      "email": "mike@gmail.com"
+    },
+    {
+      "id": "2",
+      "designation": "Tester",
+      "salary": 200000,
+      "email": "adam@gmail.com"
+    },
+    {
+      "id": "3",
+      "designation": "Developer",
+      "salary": 500000,
+      "email": "sam@gmail.com"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
+
+Step 3: Start json-server
+----------------------
+json-server --watch db.json --port 3000
+
+API endpoints:
+
+http://localhost:3000/employees
 
 
 
